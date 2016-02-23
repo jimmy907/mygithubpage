@@ -28,7 +28,7 @@ body {
 
 .box {
 	display: table-cell;
-	width: 33.3%;
+	width: 25%;
 	height: 200px;
 	text-align: center;
 	background-color: #343d46;
