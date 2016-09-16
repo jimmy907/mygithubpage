@@ -1,3 +1,127 @@
+<head>
+	<script>
+		loadNewVids();
+		function openNav(){
+			document.getElementById("sidePannel").style.width="250px";
+		}
+		function closeNav(){
+			document.getElementById("sidePannel").style.width="0";
+		}
+		
+		function showLinks(id){
+			var e = document.getElementById("links" + id);
+			if(e.style.display == 'block' || e.style.display==''){
+				e.style.display= 'none';
+			}else{
+				e.style.display = 'block';
+			}
+		}
+		
+		var slideIndex = 1;
+		showSlides(slideIndex);
+		
+		function plusSlides(n){
+			showSlides(slideIndex += n);
+		}
+		function showSlides(n){
+			var i;
+			var slides = document.getElementsByClassName("mySlides");
+			if(n > slides.length) {slideIndex = 1}
+			if(n < 1) {slideIndex = slides.length}
+			for(i = 0; i< slides.length; ++i){
+				slides[i].style.display= "none";
+			}
+			slides[slideIndex-1].style.display = "block";
+		}
+		function loadNewVids() {
+			var gbxhttp = new XMLHttpRequest();
+			var gbURL = "https://giantbomb.com/api/videos/?api_key=046f46eeafcd18b37dcb86b39b9642164a1acd27&limit=3&format=json";
+			var pos = "embed";
+			var vids = gbxhttp.results;
+			gbxhttp.onreadystatechange = function() {
+				if(this.readyState == 4 && this.status == 20){
+					for(var i = 0; i < vids.size(); ++i){
+						var out = '<iframe data-cbsi-video width="1280" height="720" src=' + vids[i].embed_player + '" frameborder="0" allowfullscreen style="width:100%"></iframe>';
+						document.getElementById(embed+i).innerHTML = out;
+					}
+				}
+			};
+			gbxhttp.open("GET", gbURL, true);
+			gbxhttp.send();
+		}
+	</script>
+</head> 
+
+
 <body>
-<h1> BUTTS </h1>
+	<h1> COLORS ARE SUPER TEMP </h1>
+	<p> and i don't know why that bar under the first link tab is there </p>
+	<div id = "test"></div>
+	
+	<div class ="container" onclick="openNav()">
+		<div class = "bar"></div>
+		<div class = "bar"></div>
+		<div class = "bar"></div>
+	</div>
+	<p style="clear:both"><br></p>
+	
+	<div id = "sidePannel" class = "sidenav">
+		<a href = "javascript:void(0)" class="closebtn" onclick = "closeNav()">&times;</a>
+		<button id = "header1" class= "header" onclick = "showLinks(1)">school</button>
+			<div id = "links1" class= "link_chunk">
+				<a href= "#"> link </a>
+				<a href= "#"> link </a>	
+				<a href= "#"> link </a>
+				<a href= "#"> link </a>	
+				<a href= "#"> link </a>
+				<a href= "#"> link </a>				
+			</div>
+		
+		<button id= "header2" class= "header" onclick = "showLinks(2)">reference</button>
+			<div id = "links2" class= "link_chunk">
+				<a href= "#"> link </a>
+				<a href= "#"> link </a>	
+				<a href= "#"> link </a>
+				<a href= "#"> link </a>	
+				<a href= "#"> link </a>
+				<a href= "#"> link </a>			
+			</div>
+		
+		<button id= "header3" class= "header" onclick = "showLinks(3)">shopping</button>
+			<div id = "links3" class= "link_chunk">
+				<a href= "#"> link </a>
+				<a href= "#"> link </a>	
+				<a href= "#"> link </a>
+				<a href= "#"> link </a>	
+				<a href= "#"> link </a>
+				<a href= "#"> link </a>			
+			</div>
+		
+		<button id= "header4" class= "header" onclick = "showLinks(4)">fun</button>
+			<div id = "links4" class= "link_chunk">
+				<a href= "#"> link </a>
+				<a href= "#"> link </a>	
+				<a href= "#"> link </a>
+				<a href= "#"> link </a>	
+				<a href= "#"> link </a>
+				<a href= "#"> link </a>			
+			</div>
+		<button id= "header_bottom" class= "header"></button>
+	</div>
+	<!END OF LINK SIDE BAR>
+	<p style="clear:both"><br></p>
+	
+	<div class = "slideshow-container">
+		<div class = "mySlides fade">
+			<div id = "embed0"></img> </div>
+		</div>
+		<div class = "mySlides fade">
+			<div id = "embed1"></div>
+		</div>	
+		<div class = "mySlides fade">
+			<div id = "embed2"></div>
+		</div>
+		<a class = "prev" onclick="plusSlides(-1)">&#10094;</a>
+		<a class = "next" onclick="plusSlides(1)">&#10095;</a>	
+	</div>
 </body>
