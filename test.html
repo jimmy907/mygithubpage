@@ -37,19 +37,31 @@
 		}
 		function loadNewVids() {
 			var gbxhttp = new XMLHttpRequest();
-			var gbURL = "https://giantbomb.com/api/videos/?api_key=046f46eeafcd18b37dcb86b39b9642164a1acd27&limit=3&format=json";
+			var gbURL = "giantbomb.com/api/videos/?api_key=046f46eeafcd18b37dcb86b39b9642164a1acd27&format=json&limit=3";
 			var pos = "embed";
-			var vids = gbxhttp.results;
+			
 			gbxhttp.onreadystatechange = function() {
-				if(this.readyState == 4 && this.status == 20){
-					for(var i = 0; i < vids.size(); ++i){
-						var out = '<iframe data-cbsi-video width="1280" height="720" src=' + vids[i].embed_player + '" frameborder="0" allowfullscreen style="width:100%"></iframe>';
-						document.getElementById(embed+i).innerHTML = out;
-					}
+				document.getElementById("test").innerHTML = "HI_preIF";
+				if(this.readyState == 4 && this.status == 200){
+					document.getElementById("test").innerHTML = "HI_insideIF";
+					var reText = this.responseText;
+					var vArr = JSON.parse(reText);
+					document.getElementById("test").innerHTML = "HI_postJSONcall";
+					postVids(vArr);
 				}
 			};
+			
 			gbxhttp.open("GET", gbURL, true);
 			gbxhttp.send();
+			
+			function postVids(vids) {
+				document.getElementById("test").innerHTML = "HI_postVids";
+				var i;
+				for(i = 0; i < vids.length; ++i){
+					var out = '<iframe data-cbsi-video width="1280" height="720" src="' + vids[i].embed_player  + '" frameborder="0" allowfullscreen style="width:100%"></iframe>';
+					document.getElementById(pos+i).innerHTML = out;
+				}			
+			}
 		}
 	</script>
 </head> 
@@ -57,7 +69,6 @@
 
 <body>
 	<h1> COLORS ARE SUPER TEMP </h1>
-	<p> and i don't know why that bar under the first link tab is there </p>
 	<div id = "test"></div>
 	
 	<div class ="container" onclick="openNav()">
@@ -113,9 +124,11 @@
 	<!END OF LINK SIDE BAR>
 	<p style="clear:both"><br></p>
 	
+	<button id ="test" onclick="loadNewVids()">CLICKME</button>
+	
 	<div class = "slideshow-container">
 		<div class = "mySlides fade">
-			<div id = "embed0"></img> </div>
+			<div id = "embed0"><iframe data-cbsi-video width="1280" height="720" src="http://www.giantbomb.com/videos/embed/11568/" frameborder="0" allowfullscreen style="width:100%"></iframe> </div>
 		</div>
 		<div class = "mySlides fade">
 			<div id = "embed1"></div>
