@@ -1,0 +1,183 @@
+body, html{
+    height: 100%;
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+
+.parallax{
+    background-image: url('test.jpg');
+
+    height: 100%;
+
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+.title-bar{
+    position: absolute;
+    left: 0;
+    top: 20%;
+
+    /*background-image:  url('test1.jpg');*/
+    background-color: #26353f;
+    width: 100%;
+    min-width: 100%;
+    min-height: 55%;
+    height: 55%;
+    overflow: hidden;
+
+    font-size: 36px;
+}
+
+.slide_image{
+    background-image:  url('test1.jpg');
+    position: relative;
+    left: 0;
+    top: 0;
+    min-width: 300%;
+    min-height: 100%;
+    animation: slideshow 30s linear infinite; 
+}
+
+ul.top_menu{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+    position: fixed;
+    width: 100%;
+    z-index: 500;
+}
+
+ul.top_menu li {float: left;}
+
+ul.top_menu li a {
+    display: block;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    transition: 0.3s;
+    font-size: 20px;
+}
+
+ul.top_menu li a:hover { background-color: #555; }
+
+li a, .drop_butt {
+    display: block;
+    color: #556;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li.drop {
+    display: block;
+}
+
+.ex_list {
+    display: none;
+    position: fixed;
+    background-color: #26353f;
+    min-width: 122px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+}
+
+.ex_list.a {
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+}
+
+@-webkit-keyframes slideshow{
+    0%   { left: 0; }
+    100% { lefat: -200%; }
+} 
+
+@keyframes slideshow{
+    0%   { left: 0; }
+    100% { left: -200%; }
+}
+
+.show { display: block; }
+
+.boxes {
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 80%;
+    background: transparent;
+}
+.boxes .box_ul {
+    top: 0%;
+    left: 0%;
+    position: absolute;
+    display: block;
+    width: 50%;
+    height: 50%;
+    background: orange;
+    border-radius: 15px 0 0 0;
+}.boxes .box_ur {
+    top: 0%;
+    left: 50%;
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    background: orange;
+    border-radius: 0 15px 0 0;
+}
+
+.boxes .box_lr {
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    background: orange;
+    border-radius: 0 0 15px 0;
+}.boxes .box_ll {
+    top: 50%;
+    left: 0;
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    background: orange;
+    border-radius: 0 0 0 15px;
+}
+
+.box_card {
+    max-height: 90%;
+    top: 5%;
+    position: absolute;
+    min-width: 50%;
+    text-align: center;
+    transition: 0.3s;
+    overflow: hidden;
+}
+.box_card .box_text {
+    padding: 2px 16px;
+}
+.box_card .box_text h4{
+    padding: 0;
+    line-height: .5;
+}
+.box_card .box_text p{
+    padding: 0;
+    font-size: 10px;
+    line-height: .5;
+}
+
+/* GAME STUFF */
+canvas{
+    border: 3px solid;
+    border-color: green;
+    position: relative;
+}
