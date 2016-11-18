@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<!
+    James Von Holle
+    Phys 211X FO3
+    Web Project 2016
+    index.html
+>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Example One</title>
+        <link rel="stylesheet" type="text/css" href="style.css">
+
+        <script src="web_stuff.js"></script>
+        <script src="examples.js"></script>
+                
+        <script> 
+            showExList();
+            loadExample(num);
+        </script>
+
+    </head>
+    <body>
+        <ul class="top_menu" id="nav">
+            <li><a href="index.html">home</a></li>
+            <li class="drop">
+                <a href="javascript:void(0)" class="drop_butt" onclick="showExList()">examples</a>
+                <div class="ex_list" id="exList">
+                    <a href="ex_0.html">one</a>
+                    <a href="ex_1.html">two</a>
+                    <a href="ex_2.html">three</a>
+                    <a href="ex_3.html">four</a>
+                </div>
+            </li>
+            <li><a href="sources.html">sources</a></li>
+            <li><a href="about.html">about</a></li>
+        </ul>
+        <div class="parallax"></div>
+        <button class="start_ex" onclick="loadExample(0)">Click to Start</button>
+    </body>
+</html>

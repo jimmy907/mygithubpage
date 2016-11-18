@@ -21,12 +21,12 @@ body, html{
 }
 
 .title-bar{
+    color: white;
     position: absolute;
     left: 0;
     top: 20%;
 
     /*background-image:  url('test1.jpg');*/
-    background-color: #26353f;
     width: 100%;
     min-width: 100%;
     min-height: 55%;
@@ -37,13 +37,21 @@ body, html{
 }
 
 .slide_image{
-    background-image:  url('test1.jpg');
+    background-image:  url('test.gif');
     position: relative;
     left: 0;
     top: 0;
     min-width: 300%;
     min-height: 100%;
+    background-repeat: repeat-x;
     animation: slideshow 30s linear infinite; 
+}
+.slide_text{
+    left: 0;
+    top: 0;
+    position: absolute;
+    animation: none;
+    color: white;
 }
 
 ul.top_menu{
@@ -115,25 +123,22 @@ li.drop {
     position: absolute;
     width: 100%;
     height: 80%;
-    background: transparent;
+    background: rgba(204,204,204,.95);
+    /*rgba(74,32,96,.95);#bfbfbf;*/
+/*    border-radius: 15px 15px 15px 15px; */
 }
 .boxes .box_ul {
     top: 0%;
     left: 0%;
     position: absolute;
-    display: block;
     width: 50%;
     height: 50%;
-    background: orange;
-    border-radius: 15px 0 0 0;
 }.boxes .box_ur {
     top: 0%;
     left: 50%;
     position: absolute;
     width: 50%;
     height: 50%;
-    background: orange;
-    border-radius: 0 15px 0 0;
 }
 
 .boxes .box_lr {
@@ -142,20 +147,15 @@ li.drop {
     position: absolute;
     width: 50%;
     height: 50%;
-    background: orange;
-    border-radius: 0 0 15px 0;
 }.boxes .box_ll {
     top: 50%;
     left: 0;
     position: absolute;
     width: 50%;
     height: 50%;
-    background: orange;
-    border-radius: 0 0 0 15px;
 }
 
 .box_card {
-    border: solid cyan;
     max-height: 90%;
     top: 5%;
     left: 30%;
@@ -178,8 +178,33 @@ li.drop {
 }
 
 /* GAME STUFF */
+.start_ex{
+    padding: 15px 25px;
+    font-size: 24px;
+    text-align: center;
+    cursor: pointer;
+    outline: none;
+    color: #fff;
+    background-color: #4caf50;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 9px #999;
+
+    position: absolute;
+    left: 45%;
+    top: 50%;
+}
+
+.start_ex:hover { background-color: #3e8e41; }
+
+.start_ex:active {
+    background-color: #3e8e41;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+}
+
 canvas{
-    border: 3px solid;
-    border-color: green;
-    position: relative;
+    border: 1px solid #d3d3d3;
+    background-color: #f1f1f1;
+    position: absolute;
 }
