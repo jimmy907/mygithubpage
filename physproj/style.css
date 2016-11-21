@@ -52,6 +52,8 @@ body, html{
     position: absolute;
     animation: none;
     color: white;
+    font-size: 52px;
+    text-shadow: 2px 2px 3px grey;
 }
 
 ul.top_menu{
@@ -174,7 +176,7 @@ li.drop {
 }
 .box_card .box_text p{
     padding: 0;
-    font-size: 12px;
+    font-size: auto;
 }
 
 /* GAME STUFF */
@@ -207,4 +209,6 @@ canvas{
     border: 1px solid #d3d3d3;
     background-color: #f1f1f1;
     position: absolute;
+    left: 5%;
 }
+
