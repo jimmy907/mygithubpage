@@ -8,69 +8,57 @@
 /* initialize global variables */
 var player;
 var platforms = [];
+var h = 10;
+var w = window.innerWidth * 0.9 / 2;
 
-var Key = {
-    _pressed: {},
-
-    LEFT : 37,
-    UP   : 38,
-    RIGHT : 39,
-    DOWN  : 40,
-
-    isDown : function(keyCode) {
-        return this._pressed[keyCode];
-    },
-
-    onKeydown : function(event) {
-        this._pressed[event.keyCode] = true;
-    },
-
-    onKeyup : function(event) {
-        delete this._pressed[event.keyCode];
-    }
-};
+window.addEventListener('keyup', function(event) { clearmove(event); }, false);
+window.addEventListener('keydown', function(event) { move(event); }, false);
 
 /* loadExample(num)
  * Takes a number
  * loads example with correct parameters
  * specified by num
  */
-function loadExample(num) {
-    var h = 70;
-    var w = window.innerWidth  * 0.9 / 2;
-    if( num == 0 ) {
-        player = new component(30, 30, "red", w, h);
-        player.gravity_type = 0;
-        player.gravity = .5;
-        platforms = make_platforms(0);
-        board.start(0);
-    }else if( num == 1 ) {
-        player = new component(30, 30, "blue", w, h);
-        player.gravity_type = 1;
-        player.gravity = .05;
-        player.gravitySpeed = 0;
-        platforms = make_platforms(1);
-        board.start(1);
-    }else if( num == 2 ) {
-        player = new component(30, 30, "red", w, h);
-        player.gravity_type = 1;
-        player.gravity = .05;
-        player.mass = 1;
-        platforms = make_platforms(2);
-        board.start(2);
-    }else if( num == 3 ) {
-        player = new component(30, 30, "red", w, h);
-        player.gravity_type = 1;
-        player.gravity = .05;
-        platforms = make_platforms(3);
-        board.start(3);
-    }else {
-        player = new component(30, 30, "red", w, h);
-        platforms = make_platforms(-1);
-        board.start(-1);
-    }
+function makeExZero(g_type) {
+    player = new component(30, 30, "red", w, h);
+    player.gravity_type = g_type;
+    player.gravity = .5;
+    player.move = false;
+    platforms = make_platforms(0);
+    board.start(0);
 }
-
+function makeExOne() {
+    player = new component(30, 30, "blue", w, h);
+    player.gravity_type = 1;
+    player.gravity = .5;
+    player.move = true;
+    platforms = make_platforms(1);
+    board.start(1);
+}
+function makeExTwo() {
+    player = new component(30, 30, "red", w, h);
+    player.gravity_type = 0;
+    player.gravity = .5;
+    player.move = false;
+    platforms = make_platforms(2);
+    board.start(0);
+}
+function makeExThree() {
+    player = new component(30, 30, "red", w, h);
+    player.gravity_type = 0;
+    player.gravity = .5;
+    player.move = false;
+    platforms = make_platforms(3);
+    board.start(0);
+}
+function makeGenEx() {
+    player = new component(30, 30, "red", w, h);
+    player.gravity_type = 0;
+    player.gravity = .5;
+    player.move = true;
+    platforms = make_platforms(-1);
+    board.start(-1);
+}
 /* board
  * struct containing data relevant to level structure
  * invariants:  
@@ -88,7 +76,7 @@ var board = {
      */
     start  : function(ex) {
         this.canvas.width = window.innerWidth * 0.9;
-        this.canvas.height = window.innerHeight * 0.4;
+        this.canvas.height = window.innerHeight * 0.9;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
         this.frameNo = 0;
@@ -113,10 +101,18 @@ function component(width, height, color, x, y, type) {
     this.x       = x;
     this.y       = y;
     this.gravitySpeed = 0;
+    if (type == "image") {
+        this.image = new Image();
+        this.image.src = color;
+    }
     this.update = function() {
         ctx = board.context;
-        ctx.fillStyle = color;
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+        if (type == "image"){
+            ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+        }else {
+            ctx.fillStyle = color;
+            ctx.fillRect(this.x, this.y, this.width, this.height);
+        }
     }
     this.newPos = function() {
         if( this.gravity_type == 1 ){
@@ -127,16 +123,24 @@ function component(width, height, color, x, y, type) {
         this.x += this.speedX;
         this.y += this.speedY + this.gravitySpeed;
         this.hitBottom();
+        this.hitTop();
     }
     this.hitBottom = function() {
         var rockbottom = board.canvas.height - this.height;
-        if( this.y > rockbottom ) {
+        if (this.y > rockbottom) {
             this.y = rockbottom;
             this.gravitySpeed = 0;
             this.gravity = 0;
         }
     }
-    this.crashWith = function( otherobj ) {
+    this.hitTop = function() {
+        if (this.y < 0) {
+            this.y = 0;
+            this.gravitySpeed = 0;
+            this.gravity = 0.05;
+        }
+    }
+    this.crashWith = function (otherobj) {
         var myleft  = this.x;
         var myright = this.x + (this.width);
         var mytop   = this.y;
@@ -151,6 +155,9 @@ function component(width, height, color, x, y, type) {
         if ( (mybot < otop) || (mytop > obot) || (myrigth < oleft) || (myleft > oright) ) 
             crash = false;
         return crash;
+    }
+    this.jump = function() {
+        this.gravity = -.2;
     }
 }
 
@@ -176,5 +183,23 @@ function make_platforms(num) {
 }
 
 function move(dir) {
-    player.image.src = "";
+    if (player.move == true) {
+        if (dir.keyCode == 38) /* up */
+            player.jump();
+        if (dir.keyCode == 37) /* left */
+            player.speedX = -1;
+        if (dir.keyCode == 39) /* right */
+            player.speedX = 1;
+    }
+}
+
+function clearmove(dir) {
+    if (player.move) {
+        if (dir.keyCode == 38) /* up */
+            player.gravity=.05;
+        if (dir.keyCode == 37) /* left */
+            player.speedX = 0;
+        if (dir.keyCode == 39) /* right */
+            player.speedX = 0;
+    }
 }

@@ -37,23 +37,31 @@ body, html{
 }
 
 .slide_image{
-    background-image:  url('big_final.gif');
+    /*background-image:  url('big_final.gif');*/
     position: relative;
     left: 0;
     top: 0;
-    min-width: 300%;
+    min-width: 350%;
     min-height: 100%;
-    background-repeat: repeat-x;
-    animation: slideshow 30s linear infinite; 
+    /*background-repeat: repeat-x;*/
+    animation: slideshow 50s linear infinite; 
 }
+
+.slide_image .img{
+    margin: 0 0 0;
+    height: 520px;
+    width: auto;
+    padding: 0;
+}
+
 .slide_text{
     left: 0;
     top: 0;
     position: absolute;
     animation: none;
-    color: white;
+    color: #f0f0f0;
     font-size: 52px;
-    text-shadow: 2px 2px 3px grey;
+    text-shadow: 2px 2px 1px black;
 }
 
 ul.top_menu{
@@ -210,5 +218,7 @@ canvas{
     background-color: #f1f1f1;
     position: absolute;
     left: 5%;
+    top: 7.5%;
+    z-index: 500;
 }
 
