@@ -8,9 +8,7 @@ body, html{
 
 .parallax{
     background-image: url('bg.gif');
-
     height: 100%;
-
     background-attachment: fixed;
     background-position: center;
     background-repeat: no-repeat;
@@ -26,7 +24,6 @@ body, html{
     left: 0;
     top: 20%;
 
-    /*background-image:  url('test1.jpg');*/
     width: 100%;
     min-width: 100%;
     min-height: 55%;
@@ -37,15 +34,13 @@ body, html{
 }
 
 .slide_image{
-    /*background-image:  url('big_final.gif');*/
     background: #26353f;
     position: relative;
     left: 0;
     top: 0;
     width: 140000px;
     height: 520px;
-    /*background-repeat: repeat-x;*/
-    animation: slideshow 50s linear infinite; 
+    animation: slideshow 65s linear infinite; 
 }
 
 .slide_image .img{
@@ -73,7 +68,7 @@ ul.top_menu{
     background-color: #333;
     position: fixed;
     width: 100%;
-    z-index: 500;
+    z-index: 2500;
 }
 
 ul.top_menu li {float: left;}
@@ -129,6 +124,14 @@ li.drop {
 
 .show { display: block; }
 
+.ghc {
+    right: 1%;
+    top: 10%;
+    display: block;
+    position: absolute;
+    background: rgba(204,204,204,0);
+}
+
 .boxes {
     display: block;
     position: absolute;
@@ -144,6 +147,7 @@ li.drop {
     position: absolute;
     width: 50%;
     height: 50%;
+    margin-left: 15px;
 }.boxes .box_ur {
     top: 0%;
     left: 50%;
@@ -187,6 +191,31 @@ li.drop {
     padding: 0;
 }
 
+.sources_list{
+    position: absolute;
+    top: 5%;
+}
+.sources_list li {
+    color: #ffffff;
+    text-shadow: 1px 1px 1px black;
+    list-style-type: none;
+    margin: 15px;
+    text-decoration: none;
+    text-align: left;
+}
+.sources_list li h4 {
+    color: #f2f2f2;
+    text-shadow: 1px 1px 1px black;
+    font-size: 42px;
+    text-align: center;
+    margin: 0;
+}
+.sources_list li a {
+    color: #d8d8d8;
+    text-align: left;
+    text-shadow: 1px 1px 1px black;
+    margin: 75px, 0, 0, 0;
+}
 /* GAME STUFF */
 .start_ex{
     padding: 15px 25px;
@@ -238,7 +267,7 @@ li.drop {
 
 canvas{
     border: 1px solid #d3d3d3;
-    background-color: #f1f1f1;
+    background: rgba(204,204,204,.95);
     position: absolute;
     left: 5%;
     top: 7.5%;

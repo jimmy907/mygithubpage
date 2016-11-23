@@ -24,7 +24,6 @@
                     <a href="ex_0.html">one</a>
                     <a href="ex_1.html">two</a>
                     <a href="ex_2.html">three</a>
-                    <a href="ex_3.html">four</a>
                 </div>
             </li>
             <li><a href="sources.html">sources</a></li>
@@ -40,12 +39,40 @@
                    you go. In games, we can choose if we want it to work this way or not.
                    Choosing what type of gravity we have is a fundamental choice in how our
                    world is going to feel when we move around. Click the buttons below to get
-                   a feel for the two types of gravity we could use.</p>
+                   a feel for the two types of gravity we could use.
+                </p>
             </div>
             </div>
         </div>
         <button class="start_ex" onclick="makeExZero(0)" style="bottom: 40%; left: 20%;">Velocity</button>
         <button class="start_ex" onclick="makeExZero(1)" style="bottom: 40%; right: 20%;">Acceleration</button>
         <button id="close_butt" class="hide_ex" onclick="location.reload()" style="top: 7.9%; right: 5%;">X</button>
+        <div class="parallax"></div>
+        <div class="boxes" style="position: absolute; top: 125%; height: 43%;">
+            <div class="box_ul">
+                <div class="box_text">
+                    <h1><b>So?</b></h1>
+                    <p>Now that you have a better feeling of our options in terms of the gravitation or our world,
+                       we can better compair it to what keeps us on the ground when we're not double jumping over
+                       spikes. As you well know, our gravity on earth is an accleration due to force. No one really
+                       knows why gravity works, but it does so we just kinda go with it. Not much else we could do really.
+                       The rate of acceleration caused by earth on an object of <b><i>any mass</i></b> is commonly refered
+                       to as <b><i>g</i></b>. On the surface of the earth (where most of us spend most of our time, even planes
+                       basically still the surface(earth's really big yo)) <b><i>g = 9.81 m/s<sup>2</sup></i></b>. Which means for every
+                       second you fall, your speed, or velocity (technically the magnitude of your velocity) increases by <b><i>9.81 meters per second</i></b>.
+                       Thats pretty crazy when you think about it.
+                       <br><br>
+                       Because we render our world on a computer screen, our <b><i>g</i></b> is going to be a little different. For the 
+                       previous examples, the velocity for the block with a fixed gravity is 0.5. Now the engineers and scientists read this are probably
+                       freaking out because there aren't any units. But that's where they're wrong. Well, not technically I guess, but 
+                       in our happy little world there's no such thing as "meters" or really even "seconds". Games work like movies, by drawing
+                       a bunch of images in rapid succession. So if you want units, think of our gravity in terms of pixels per frame. For more
+                       in depth break down of how my code in particular is working, please refer to Github repository for this project linked on the
+                       about page. If you don't know what a Github is, don't worry, you're probably a normal person.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="start_ex" style="top: 160%; right: 20%;"><a href="ex_1.html">Next</a></div>
     </body>
 </html>

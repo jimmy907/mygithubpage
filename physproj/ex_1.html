@@ -4,19 +4,16 @@
     Phys 211X FO3
     Web Project 2016
     ex_1.html
+    movement example
 >
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>Example Two</title>
+        <title>Example Two, Movement</title>
         <link rel="stylesheet" type="text/css" href="style.css">
 
         <script src="web_stuff.js"></script>
         <script src="examples.js"></script>
-                
-        <script> 
-            showExList();
-        </script>
 
     </head>
     <body>
@@ -28,13 +25,50 @@
                     <a href="ex_0.html">one</a>
                     <a href="ex_1.html">two</a>
                     <a href="ex_2.html">three</a>
-                    <a href="ex_3.html">four</a>
                 </div>
             </li>
             <li><a href="sources.html">sources</a></li>
             <li><a href="about.html">about</a></li>
         </ul>
         <div class="parallax"></div>
-        <button class="start_ex" onclick="makeExOne()">Click to Start</button>
+        <div class="boxes" style="position: absolute; top: 25%; height: 25%;">
+            <div class="box_ul">
+            <div class="box_text">
+                <h1><b>Movement</b></h1>
+                <p>Now that we've gained a better understanding of how we fall, we 
+                   can work on picking ourselves up and moving around. Click below to start a 
+                   simple example of how we can move around the world using the arrow keys.
+                </p>
+            </div>
+            </div>
+        </div>
+        <button class="start_ex" onclick="makeExOne()" style="top: 42%; right: 20%;">Start</button>
+        <button id="close_butt" class="hide_ex" onclick="location.reload()" style="top: 7.9%; right: 5%;">X</button>
+        <div class="parallax"></div>
+        <div class="boxes" style="position: absolute; top: 125%; height: 33%;">
+            <div class="box_ul">
+                <div class="box_text">
+                    <h1><b>Notice anything?</b></h1>
+                    <p>If you pay close attention to the movement in the previous example, it should have
+                       been pretty obvious how we were moving. Well, at least the type of movement in the 
+                       different directions. Gravity is an acceleration, as the previous example demonstrated
+                       it just feels more natural than a flat velocity. Probably because we're used to watching
+                       things accelerate as they fall. On a simalar note, you might have noted that the upward
+                       motion was also an acceleration. If you recal, I listed our gravity as 0.05, this is because
+                       for reasons beyond mortal understanding the authors of the HTML5 canvas feature decided that
+                       the positive Y axis is down, which isn't that big of a deal, but it does mean that our 
+                       acceleration for ascending is -0.2, which might not seem like that much larger than our
+                       gravity on paper, but as can be seen in the example, it gets going pretty quick. Our horizontal
+                       movement feels really sluggish by contrast, even though at 1 it should be larger than 
+                       either of our accelerations, because we accelerate at the rate of frames and not seconds,
+                       we increment our velocity about 60 times per second, so by the time one second has passed, 
+                       we're already moving at <b> .05 * 60 = 3 </b> which is 3 times faster than our horizontal
+                       velocity.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="start_ex" style="top: 150%; right: 20%;"><a href="ex_2.html">Next</a></div>
+        <div class="start_ex" style="top: 150%; right: 27%;"><a href="ex_0.html">Previous</a></div>
     </body>
 </html>

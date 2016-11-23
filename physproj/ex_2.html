@@ -3,21 +3,17 @@
     James Von Holle
     Phys 211X FO3
     Web Project 2016
-    index.html
+    ex_2.html
+    crashing into stuff
 >
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>Example Two</title>
+        <title>Example Two, Movement</title>
         <link rel="stylesheet" type="text/css" href="style.css">
 
         <script src="web_stuff.js"></script>
         <script src="examples.js"></script>
-                
-        <script> 
-            showExList();
-            loadExample(num);
-        </script>
 
     </head>
     <body>
@@ -29,13 +25,33 @@
                     <a href="ex_0.html">one</a>
                     <a href="ex_1.html">two</a>
                     <a href="ex_2.html">three</a>
-                    <a href="ex_3.html">four</a>
                 </div>
             </li>
             <li><a href="sources.html">sources</a></li>
             <li><a href="about.html">about</a></li>
         </ul>
         <div class="parallax"></div>
-        <button id="start_ex" onclick="loadExample(2)">Click to Start</button>
+        <div class="boxes" style="position: absolute; top: 25%; height: 25%;">
+            <div class="box_ul">
+            <div class="box_text">
+                <h1><b>Movement</b></h1>
+                <p>
+                </p>
+            </div>
+            </div>
+        </div>
+        <button class="start_ex" onclick="makeExOne()" style="top: 42%; right: 20%;">Start</button>
+        <button id="close_butt" class="hide_ex" onclick="location.reload()" style="top: 7.9%; right: 5%;">X</button>
+        <div class="parallax"></div>
+        <div class="boxes" style="position: absolute; top: 125%; height: 33%;">
+            <div class="box_ul">
+                <div class="box_text">
+                    <h1><b>Notice anything?</b></h1>
+                    <p>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="start_ex" style="top: 150%; right: 27%;"><a href="ex_1.html">Previous</a></div>
     </body>
 </html>
