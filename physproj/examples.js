@@ -35,6 +35,7 @@ function makeExOne() {
     player.move = true;
     platforms = make_platforms(1);
     board.start(1);
+    document.getElementById("close_butt").classList.toggle("show");
 }
 function makeExTwo() {
     player = new component(30, 30, "red", w, h);
@@ -43,6 +44,7 @@ function makeExTwo() {
     player.move = false;
     platforms = make_platforms(2);
     board.start(0);
+    document.getElementById("close_butt").classList.toggle("show");
 }
 function makeExThree() {
     player = new component(30, 30, "red", w, h);
@@ -51,6 +53,7 @@ function makeExThree() {
     player.move = false;
     platforms = make_platforms(3);
     board.start(0);
+    document.getElementById("close_butt").classList.toggle("show");
 }
 function makeGenEx() {
     player = new component(30, 30, "red", w, h);
@@ -59,6 +62,7 @@ function makeGenEx() {
     player.move = true;
     platforms = make_platforms(-1);
     board.start(-1);
+    document.getElementById("close_butt").classList.toggle("show");
 }
 
 /* board
