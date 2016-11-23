@@ -26,6 +26,7 @@ function makeExZero(g_type) {
     player.move = false;
     platforms = make_platforms(0);
     board.start(0);
+    document.getElementById("close_butt").classList.toggle("show");
 }
 function makeExOne() {
     player = new component(30, 30, "blue", w, h);
@@ -59,6 +60,7 @@ function makeGenEx() {
     platforms = make_platforms(-1);
     board.start(-1);
 }
+
 /* board
  * struct containing data relevant to level structure
  * invariants:  

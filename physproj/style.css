@@ -7,7 +7,7 @@ body, html{
 }
 
 .parallax{
-    background-image: url('test.jpg');
+    background-image: url('bg.gif');
 
     height: 100%;
 
@@ -38,11 +38,12 @@ body, html{
 
 .slide_image{
     /*background-image:  url('big_final.gif');*/
+    background: #26353f;
     position: relative;
     left: 0;
     top: 0;
-    min-width: 350%;
-    min-height: 100%;
+    width: 140000px;
+    height: 520px;
     /*background-repeat: repeat-x;*/
     animation: slideshow 50s linear infinite; 
 }
@@ -56,7 +57,7 @@ body, html{
 
 .slide_text{
     left: 0;
-    top: 0;
+    bottom: 3.5%;
     position: absolute;
     animation: none;
     color: #f0f0f0;
@@ -118,12 +119,12 @@ li.drop {
 
 @-webkit-keyframes slideshow{
     0%   { left: 0; }
-    100% { lefat: -200%; }
+    100% { lefat: -250%; }
 } 
 
 @keyframes slideshow{
     0%   { left: 0; }
-    100% { left: -200%; }
+    100% { left: -270%; }
 }
 
 .show { display: block; }
@@ -184,7 +185,6 @@ li.drop {
 }
 .box_card .box_text p{
     padding: 0;
-    font-size: auto;
 }
 
 /* GAME STUFF */
@@ -201,14 +201,37 @@ li.drop {
     box-shadow: 0 9px #999;
 
     position: absolute;
-    left: 45%;
-    top: 50%;
 }
 
 .start_ex:hover { background-color: #3e8e41; }
 
 .start_ex:active {
     background-color: #3e8e41;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+}
+
+.hide_ex{
+    display: none;
+    padding: 15px 25px;
+    font-size: 24px;
+    text-align: center;
+    cursor: pointer;
+    outline: none;
+    color: #fff;
+    background-color: #c63521;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 9px #999;
+    z-index: 600;
+    position: absolute;
+}
+.show { display: block; }
+
+.hide_ex:hover { background-color: #832316; }
+
+.hide_ex:active {
+    background-color: #6d1d12;
     box-shadow: 0 5px #666;
     transform: translateY(4px);
 }
