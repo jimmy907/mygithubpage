@@ -65,6 +65,10 @@ function makeGenEx() {
     document.getElementById("close_butt").classList.toggle("show");
 }
 
+function make_platforms(num) {
+    platforms[0] = new component(30, 30, "red", w, h);
+}
+
 /* board
  * struct containing data relevant to level structure
  * invariants:  
@@ -98,7 +102,25 @@ var board = {
     }
 }
 
+/* conponent
+ * this function acts as a class
+ * defines all the needed functions for objects in  the
+ * world, including player, platforms, text
+ * invariants:
+ *     width > 0 && height > 0
+ */
 function component(width, height, color, x, y, type) {
+    /* members
+     * type: color(default), image, text
+     * widht, hieght: size of component's hitbox, size of rectangle drawn if type color
+     * speedX/speedY: speed in the X and Y directions accordingly, +Y goes down, +X goes right
+     * x/y: position of component on canvas
+     * gravity_type: 0 for velocity, 1 for acceleration
+     * gravitySpeed: current speed of gravity
+     * gravity: acceleration of gravity
+     * mass: simuated mass of object, used for collision simulation
+     * friction: simulated friction with ground, used for collision simulation
+     */
     this.type    = type;
     this.width   = width;
     this.height  = height;
@@ -170,6 +192,9 @@ function component(width, height, color, x, y, type) {
 function updateBoard() {
     var x, height, gap, minHiehgt, maxHeight, minGap, maxGap;
 
+    /*for(var i = 0; i < platforms.length; +i)
+        player.crashWith(platforms[i]);*/
+
     board.clear();
     board.frameNo++;
     
@@ -181,12 +206,9 @@ function updateBoard() {
 }
 
 function everyinterval(n) {
-    return ((board.frameNo / n) % 1 == 0)
+    return ((board.frameNo / n) % 1 == 0);
 }
 
-function make_platforms(num) {
-    platforms = [1];
-}
 
 function move(dir) {
     if (player.move == true) {
