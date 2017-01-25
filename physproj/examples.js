@@ -7,22 +7,21 @@
 
 /* initialize global variables */
 var player;
-var platforms = [];
+var platform;
 var h = 10;
 var w = window.innerWidth * 0.9 / 2;
 
 window.addEventListener('keyup', function(event) { clearmove(event); }, false);
 window.addEventListener('keydown', function(event) { move(event); }, false);
 
-/* loadExample(num)
- * Takes a number
+/* makeEx[NUMBER]()
+ * [NUMBER] changes with each example
  * loads example with correct parameters
- * specified by num
  */
 function makeExZero(g_type) {
     player = new component(30, 30, "red", w, h);
     player.gravity_type = g_type;
-    player.gravity = .5;
+    player.gravity = .05;
     player.move = false;
     platforms = make_platforms(0);
     board.start(0);
@@ -31,27 +30,20 @@ function makeExZero(g_type) {
 function makeExOne() {
     player = new component(30, 30, "blue", w, h);
     player.gravity_type = 1;
-    player.gravity = .5;
+    player.gravity = .05;
     player.move = true;
-    platforms = make_platforms(1);
+    player.horz = false;
     board.start(1);
     document.getElementById("close_butt").classList.toggle("show");
 }
 function makeExTwo() {
     player = new component(30, 30, "red", w, h);
-    player.gravity_type = 0;
-    player.gravity = .5;
-    player.move = false;
+    player.gravity_type = 1;
+    player.gravity = .05;
+    player.move = true;
+    player.horz = true;
+    player.mass = 10;
     platforms = make_platforms(2);
-    board.start(0);
-    document.getElementById("close_butt").classList.toggle("show");
-}
-function makeExThree() {
-    player = new component(30, 30, "red", w, h);
-    player.gravity_type = 0;
-    player.gravity = .5;
-    player.move = false;
-    platforms = make_platforms(3);
     board.start(0);
     document.getElementById("close_butt").classList.toggle("show");
 }
@@ -66,7 +58,13 @@ function makeGenEx() {
 }
 
 function make_platforms(num) {
-    platforms[0] = new component(30, 30, "red", w, h);
+    var thing = new component(30, 70, "purple", w+100, h);
+    platform = thing;
+    platform.gravity_type = 1;
+    platform.gravity = player.gravity;
+    platform.move = false;
+    platform.friction = 4;
+    platform.mass = 20;
 }
 
 /* board
@@ -128,6 +126,7 @@ function component(width, height, color, x, y, type) {
     this.speedY  = 0;
     this.x       = x;
     this.y       = y;
+    this.h_acc   = 0;
     this.gravitySpeed = 0;
     if (type == "image") {
         this.image = new Image();
@@ -145,6 +144,7 @@ function component(width, height, color, x, y, type) {
     this.newPos = function() {
         if( this.gravity_type == 1 ){
             this.gravitySpeed += this.gravity;
+            this.speedX += this.h_acc;
         } else {
             this.gravitySpeed = this.gravity;
         }
@@ -167,6 +167,13 @@ function component(width, height, color, x, y, type) {
             this.gravitySpeed = 0;
             this.gravity = 0.05;
         }
+        if (this.x < 0){
+            this.h_acc = 0;
+            this.speedX = 0;
+            this.x = 0;
+        }else if (this.x > board.canvas.width - this.width) {
+            this.x = board.canvas.width - this.width;
+        }
     }
     this.crashWith = function (otherobj) {
         var myleft  = this.x;
@@ -180,20 +187,31 @@ function component(width, height, color, x, y, type) {
         var obot   = otherobj.y + (otherobj.height);
         
         var crash = true;
-        if ( (mybot < otop) || (mytop > obot) || (myrigth < oleft) || (myleft > oright) ) 
+        if ( (mybot < otop) || (mytop > obot) || (myright < oleft) || (myleft > oright) ) 
             crash = false;
         return crash;
     }
     this.jump = function() {
-        this.gravity = -.2;
+        this.gravity = -.1;
     }
 }
 
 function updateBoard() {
     var x, height, gap, minHiehgt, maxHeight, minGap, maxGap;
 
-    /*for(var i = 0; i < platforms.length; +i)
-        player.crashWith(platforms[i]);*/
+    if (player.crashWith(platform) == true) {
+        do_physics (player, platform);
+        player.speedX = 0;
+        player.h_acc = 0;
+        if (player.x > platform.x)
+            player.x += 1;
+        else
+            player.x -= 1;
+        if (player.y > platform.y)
+            player.y += 1;
+        else
+            player.y -= 1;
+    }
 
     board.clear();
     board.frameNo++;
@@ -203,6 +221,18 @@ function updateBoard() {
     }
     player.newPos();
     player.update();
+    platform.newPos();
+    platform.update();
+}
+
+function do_physics (one, two) {
+    var forceX = one.h_acc * one.mass;
+    if (forceX < 0)
+        forceX * -1;
+    if (forceX > two.friction) {
+        two.h_acc = one.h_acc / (two.mass / one.mass);
+        one.h_acc = -one.h_acc / (two.mass / one.mass);
+    }
 }
 
 function everyinterval(n) {
@@ -212,12 +242,21 @@ function everyinterval(n) {
 
 function move(dir) {
     if (player.move == true) {
-        if (dir.keyCode == 38) /* up */
-            player.jump();
-        if (dir.keyCode == 37) /* left */
-            player.speedX = -1;
-        if (dir.keyCode == 39) /* right */
-            player.speedX = 1;
+        if (player.horz == true) {
+            if (dir.keyCode == 38) /* up */
+                player.jump();
+            if (dir.keyCode == 37) /* left */
+                player.h_acc = -0.5;
+            if (dir.keyCode == 39) /* right */
+                player.h_acc = 0.5;
+        }else {
+            if (dir.keyCode == 38) /* up */
+                player.jump();
+            if (dir.keyCode == 37) /* left */
+                player.speedX = -1;
+            if (dir.keyCode == 39) /* right */
+                player.speedX = 1;
+        }
     }
 }
 
@@ -225,9 +264,10 @@ function clearmove(dir) {
     if (player.move) {
         if (dir.keyCode == 38) /* up */
             player.gravity=.05;
-        if (dir.keyCode == 37) /* left */
+        if (dir.keyCode == 37) { /* left */
             player.speedX = 0;
-        if (dir.keyCode == 39) /* right */
+        }if (dir.keyCode == 39) { /* right */
             player.speedX = 0;
+        }
     }
 }
