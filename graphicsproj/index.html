@@ -23,6 +23,14 @@
 <td style="padding: 5pt">WASD</td>
 <td style="padding: 5pt">Rotate camera</td>
 </tr>
+<tr>
+<td style="padding: 5pt">Space</td>
+<td style="padding: 5pt">Reset Camera</td>
+</tr>
+<tr>
+<td style="padding: 5pt">2</td>
+<td style="padding: 5pt">Drop Table</td>
+</tr>
 </table>
 <canvas id="can1" width="500" height="400"
     style="display: block; margin: 0; padding: 0;"</canvas>
@@ -178,13 +186,13 @@ void main()
   var clocs;
   var cvels;
   var crots;
-  var cubespin = 0;
   var cubenorms;
   
   var leftWall = -22.5;
   var rightWall = 22.5;
   var backWall = -45.;
   var frontWall = 45.;
+  var floor = -rad;
   
   function shuffle(array) {
     var currentIndex = array.length, temporaryValue, randomIndex;
@@ -285,7 +293,7 @@ void main()
     locs.push(loc);
     
     // cueball
-    vels.push(vec3.fromValues(0.,0.,-20.));
+    vels.push(vec3.fromValues(0.,3.,-20.));
     locs.push(vec3.fromValues(0.,0.,frontWall/2));
   }
 
@@ -298,9 +306,6 @@ void main()
     for(var i = 0; i < NUM_CUBES; ++i) {
       crots.push([0.,0.]);
       cvels.push(vec3.fromValues(0.,0.,0.));
-      cubenorms.push([vec3.fromValues(1.,0.,0.), vec3.fromValues(-1.,0.,0.), 
-                      vec3.fromValues(0.,1.,0.), vec3.fromValues(0.,-1.,0.),
-                      vec3.fromValues(0.,0.,1.), vec3.fromValues(0.,0.,-1.),]);
     }
     
     // back right
@@ -396,7 +401,7 @@ void main()
       pushMvMatrix(gl);
         
         mat4.translate(gl.mvMatrix, gl.mvMatrix,
-          [clocs[i][0], clocs[i][1], clocs[i][2]]);
+          [clocs[i][0], floor+rad+clocs[i][1], clocs[i][2]]);
           
         mat4.rotate(gl.mvMatrix, gl.mvMatrix, crots[i][0], [0.,1.,0.]);
         
@@ -408,8 +413,8 @@ void main()
     // left wall
     pushMvMatrix(gl);
       mat4.translate(gl.mvMatrix, gl.mvMatrix,
-        [leftWall, 1., 0.]);
-      mat4.rotate(gl.mvMatrix, gl.mvMatrix, Math.PI/180 * 90., [0.,1.,0.]);
+        [leftWall, floor+rad+1., 0.]);
+      mat4.rotate(gl.mvMatrix, gl.mvMatrix, Math.PI/180 * 90., [0.,floor+rad+1.,0.]);
       mat4.scale(gl.mvMatrix, gl.mvMatrix, [90., 4., 1.]);
       
       drawSquare(gl, 1., 0., 1., 0., 1.);
@@ -418,8 +423,8 @@ void main()
     // right wall
     pushMvMatrix(gl);
       mat4.translate(gl.mvMatrix, gl.mvMatrix,
-        [rightWall, 1., 0.]);
-      mat4.rotate(gl.mvMatrix, gl.mvMatrix, Math.PI/180 * -90., [0.,1.,0.]);
+        [rightWall, floor+rad+1., 0.]);
+      mat4.rotate(gl.mvMatrix, gl.mvMatrix, Math.PI/180 * -90., [0.,floor+rad+1.,0.]);
       mat4.scale(gl.mvMatrix, gl.mvMatrix, [90., 4., 1.]);
       
       drawSquare(gl, 1., 0., 1., 0., 1.);
@@ -428,7 +433,7 @@ void main()
     // back wall
     pushMvMatrix(gl);
       mat4.translate(gl.mvMatrix, gl.mvMatrix,
-        [0., 1., backWall]);
+        [0., floor+rad+1., backWall]);
       mat4.scale(gl.mvMatrix, gl.mvMatrix, [45., 4., 1.]);
       
       drawSquare(gl, 1., 0., 1., 0., 1.);
@@ -437,7 +442,7 @@ void main()
     // front wall
     pushMvMatrix(gl);
       mat4.translate(gl.mvMatrix, gl.mvMatrix,
-        [0., 1., frontWall]);
+        [0., floor+rad+1., frontWall]);
       mat4.rotate(gl.mvMatrix, gl.mvMatrix, Math.PI/180 * 180., [0.,1.,0.]);
       mat4.scale(gl.mvMatrix, gl.mvMatrix, [45., 4., 1.]);
       
@@ -447,7 +452,7 @@ void main()
     //floor
     pushMvMatrix(gl);
       mat4.translate(gl.mvMatrix, gl.mvMatrix,
-        [0., -rad, 0.]);
+        [0., floor, 0.]);
       mat4.rotate(gl.mvMatrix, gl.mvMatrix, Math.PI/180 * -90., [1.,0.,0.]);
       mat4.scale(gl.mvMatrix, gl.mvMatrix, [46., 92., 1.]);
       
@@ -506,9 +511,13 @@ void main()
       
       // sphere hit cube
       for(var j = 0; j < NUM_CUBES; ++j) {
-        if(vec3.distance(locs[i], clocs[j]) < rad+cuz/2){
-          vec3.scale(vels[i],vels[i], 0);
-          crots[j][1] = 12;
+        if(vec3.distance(locs[i], clocs[j]) < rad+Math.sqrt(2*((cuz/2)*(cuz/2)))){
+          var temp = vec3.fromValues(0.,0.,0.);
+          vec3.subtract(temp, locs[i], clocs[j]);
+          vec3.normalize(temp, temp);
+          vec3.scale(temp, temp, 2.*vec3.dot(temp, vels[i]));
+          vec3.subtract(vels[i], vels[i], temp);
+          crots[j][1] = 8 * temp[0];
         }
       }
       // sphere hit wall
@@ -541,13 +550,13 @@ void main()
         locs[i][2] = frontWall - rad;
       }
       // sphere hit floor
-      if(locs[i][1] < 0.) {
+      if(locs[i][1] - rad < floor) {
       var damp;
         var vy = vels[i][1];
         var potential = vy*vy-2. * gravity*(-2.*locs[i][1]);
         if(potential < 0.) {
           vels[i][1] = 0;
-          locs[i][1] = 0;
+          locs[i][1] = floor+rad;
         } else {
           vels[i][1] = Math.sqrt(potential);
           locs[i][1] = -locs[i][1];
@@ -568,7 +577,7 @@ void main()
       vels[i][1] -= gravity * elapsedtime;
       vec3.scaleAndAdd(locs[i],locs[i],vels[i], elapsedtime);
       
-      vec3.scale(vels[i], vels[i], .9999);
+      vec3.scale(vels[i], vels[i], .999);
     }
     
     for(var i = 0; i < NUM_CUBES; ++i) {
@@ -630,8 +639,6 @@ void main()
         break;
       case 'W':
         upang += Math.PI/180. * 2.;
-        if (upang > Math.PI/2.)
-          upang = Math.PI/2.;
         postRedisplay();
         break;
       case 'a':  // A: Move camera left
@@ -646,8 +653,6 @@ void main()
         break;
       case 'S':
         upang -= Math.PI/180. * 2.;
-        if (upang < 0.)
-          upang = 0.;
         postRedisplay();
         break;
       case 'd':  // D: Move camera right
@@ -658,7 +663,16 @@ void main()
         postRedisplay();
         break;
       case ' ': // space: shoot ball
+        floor = -rad;
         postRedisplay();
+        upang = upang_start;
+        sideang = sideang_start
+        xpos = 0;
+        ypos = 0;
+        zpos = -15;
+        break;
+      case '2':
+        floor -= 10;
         break;
     }
   }
