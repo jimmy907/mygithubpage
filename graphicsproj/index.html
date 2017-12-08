@@ -1,0 +1,668 @@
+<!--
+  vonholle_cs381_proj.html
+  James R. Von Holle
+  09 Dec 2017
+
+  For CS F381 / CSCE A385 Fall 2017
+-->
+<!-- HTML STUFF -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Jimmy's cool project</title>
+</head>
+<body onload = "appMain('can1')">
+<table style="position: absolute; left: 20px; top: 10px; spacing: 20pt;
+  color: #666fff">
+<tr>
+<td style="padding: 5pt">wasd</td>
+<td style="padding: 5pt">Move camera</td>
+</tr>
+<tr>
+<td style="padding: 5pt">WASD</td>
+<td style="padding: 5pt">Rotate camera</td>
+</tr>
+</table>
+<canvas id="can1" width="500" height="400"
+    style="display: block; margin: 0; padding: 0;"</canvas>
+<script type="text/javascript" src="gl-matrix-min.js"></script>
+<script type="text/javascript" src="quoll.js"></script>
+<!-- ************************************************************** -->
+<!-- * GLSL Shaders                                               * -->
+<!-- ************************************************************** -->
+
+<script id="vshader1" type="x-shader/x-vertex">
+// Vertex Shader #1
+
+uniform mat4 projectionMatrix;
+uniform mat4 modelViewMatrix;
+uniform mat3 normalMatrix;
+
+attribute vec4 vertex_attr;
+attribute vec4 color_attr;
+attribute vec3 normal_attr;
+
+varying vec4 paintcolor_var;
+varying vec3 surfpt_var;
+varying vec3 surfnorm_var;
+
+void main()
+{
+    // Compute vertex position
+    vec4 surfpt4 = modelViewMatrix * vertex_attr;
+    surfpt_var = surfpt4.xyz / surfpt4.w;
+    gl_Position = projectionMatrix * surfpt4;
+
+    // Compute normal
+    surfnorm_var = normalize(normalMatrix * normal_attr);
+
+    // Send paint color to fragment shader
+    paintcolor_var = color_attr;
+}
+</script>
+<script id="fshader1" type="x-shader/x-fragment">
+// Fragment Shader #1
+
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+varying vec4 paintcolor_var;
+varying vec3 surfpt_var;
+varying vec3 surfnorm_var;
+
+// bpLight
+// Compute color based on Blinn-Phong Illumination Model.
+vec4 bpLight(
+    vec4 lightcolor,
+    vec4 lightpos4,  // Homogeneous form
+    vec4 paintcolor,
+    vec3 surfpt,
+    vec3 surfnorm)
+{
+    // ***** Scalar Lighting Parameters *****
+
+    float ambientfrac = 0.2;
+        // Ambient light color, as fraction of light color
+    float shininess = 20.;
+        // PHONG Model shininess exponent
+        // (Blinn-Phong needs 4 times larger)
+
+    // ***** Direction of Light Source (cam coords) *****
+    vec3 lightdir;
+    if (lightpos4.w == 0.)
+        lightdir = normalize(lightpos4.xyz);
+    else
+        lightdir = normalize(lightpos4.xyz/lightpos4.w - surfpt);
+
+    // ***** Compute the Three Parts of Blinn-Phong Model *****
+
+    // Ambient
+    vec4 ambientcolor = ambientfrac * lightcolor * paintcolor;
+
+    // Diffuse
+    // Lambert cosine (or 0 if this is negative)
+    float lambertcos = max(0., dot(surfnorm, lightdir));
+    vec4 diffusecolor = lambertcos * lightcolor * paintcolor;
+
+    // Specular
+    vec3 viewdir = normalize(-surfpt);
+    vec3 halfway = normalize(viewdir + lightdir);
+    float specularcoeff = pow(max(0., dot(surfnorm, halfway)),
+                              4.*shininess);
+        // Blinn-Phong needs shininiess 4 * [Phong shininess]
+    vec4 specularcolor = specularcoeff * lightcolor;
+
+    // ***** Combine the Three Parts *****
+
+    return clamp(ambientcolor + diffusecolor + specularcolor,
+                 0., 1.);
+}
+void main()
+{
+    // Surface normal
+    vec3 surfnorm = normalize(surfnorm_var);
+
+    // Light-source color & position/direction
+    vec4 lightcolor = vec4(1., 1., 1., 1.);  // White
+    vec4 lightpos4 =  vec4(-0., 12., -4., 1.);
+
+    // Apply Blinn-Phong Illumination Model
+    vec4 litcolor = bpLight(
+        lightcolor,
+        lightpos4,
+        paintcolor_var,
+        surfpt_var,
+        surfnorm);
+
+    // Send color to framebuffer
+    gl_FragColor = vec4(litcolor.rgb, 1.0);
+}
+</script>
+
+<!-- END GLSL Shaders -->
+
+<!-- ************************************************************** -->
+<!-- * JavaScript Application                                     * -->
+<!-- ************************************************************** -->
+<script type="text/javascript">
+  // Global variables
+  
+  // WebGL General
+  var gl;                 // WebGL rendering context
+  
+  // Shaders
+  var shaderprog1;        // Shader program object
+  
+  // Objects
+  var xpos = 0.;
+  var ypos = 0.;
+  var zpos = -15.;
+  var sideang;
+  var sideang_start = 0.;
+  var upang;
+  var upang_start = Math.PI/180. * 8.;
+  var NUM_SPHERES = 16;
+  var NUM_CUBES = 6;
+  var rad = 1.125;
+  var cuz = 4;
+  
+  var velfact = 7.;
+  var gravity = 3.;
+  
+  var locs;
+  var vels;
+  var colors;
+
+  var clocs;
+  var cvels;
+  var crots;
+  var cubespin = 0;
+  var cubenorms;
+  
+  var leftWall = -22.5;
+  var rightWall = 22.5;
+  var backWall = -45.;
+  var frontWall = 45.;
+  
+  function shuffle(array) {
+    var currentIndex = array.length, temporaryValue, randomIndex;
+  
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+  
+      // Pick a remaining element...
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+  
+      // And swap it with the current element.
+      temporaryValue = array[currentIndex];
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
+    }
+
+    return array;
+  }
+
+  function rackEm() {
+    locs = new Array();
+    vels = new Array();
+    colors = new Array();
+    
+    for(var b = 0; b < NUM_SPHERES-1; ++b) {
+      vels[b] = vec3.fromValues(0.,0.,0.);
+      colors.push(b);
+    } 
+    colors = shuffle(colors);
+    
+    for(var i = 0; i < NUM_SPHERES-1; ++i) {
+      if(colors[i] == 7) {
+        colors[i] = colors[4];
+        colors[4] = 7;
+        break;
+      }
+    }
+    
+    // tip
+    var loc = vec3.fromValues(0., 0., backWall/2);
+    locs.push(loc);
+    
+    // second row left
+    loc = vec3.fromValues(1.*rad, 0., -2.*rad-frontWall/2);
+    locs.push(loc);
+    
+    // second row right
+    loc = vec3.fromValues(-1.*rad, 0., -2.*rad-frontWall/2);
+    locs.push(loc);
+    
+    // third row right
+    loc = vec3.fromValues(-2.*rad, 0., -4.*rad-frontWall/2);
+    locs.push(loc);
+    
+    // eight ball (third row middle)
+    loc = vec3.fromValues(0., 0., -4.*rad-frontWall/2);
+    locs.push(loc);
+    
+    // third row left
+    loc = vec3.fromValues(2.*rad, 0., -4.*rad-frontWall/2);
+    locs.push(loc);
+    
+    // fourth row outside left
+    loc = vec3.fromValues(-3.*rad, 0., -6.*rad-frontWall/2);
+    locs.push(loc);
+    
+    // fourth row inside left
+    loc = vec3.fromValues(-1.*rad, 0., -6.*rad-frontWall/2);
+    locs.push(loc);
+    
+    // fourth row inside right
+    loc = vec3.fromValues(1.*rad, 0., -6.*rad-frontWall/2);
+    locs.push(loc);
+    
+    // fourth row outside right
+    loc = vec3.fromValues(3.*rad, 0., -6.*rad-frontWall/2);
+    locs.push(loc);
+    
+    // fifth row outside left
+    loc = vec3.fromValues(-4.*rad, 0., -8.*rad-frontWall/2);
+    locs.push(loc);
+    
+    // fifth row inside left
+    loc = vec3.fromValues(-2.*rad, 0., -8.*rad-frontWall/2);
+    locs.push(loc);
+    
+    // fifth row middle
+    loc = vec3.fromValues(0.*rad, 0., -8.*rad-frontWall/2);
+    locs.push(loc);
+    
+    // fifth row inside right
+    loc = vec3.fromValues(2.*rad, 0., -8.*rad-frontWall/2);
+    locs.push(loc);
+    
+    // fifth row outside right
+    loc = vec3.fromValues(4.*rad, 0., -8.*rad-frontWall/2);
+    locs.push(loc);
+    
+    // cueball
+    vels.push(vec3.fromValues(0.,0.,-20.));
+    locs.push(vec3.fromValues(0.,0.,frontWall/2));
+  }
+
+  function initCubes() {
+    clocs = new Array();
+    crots = new Array();
+    cvels = new Array();
+    cubenorms = new Array();
+    
+    for(var i = 0; i < NUM_CUBES; ++i) {
+      crots.push([0.,0.]);
+      cvels.push(vec3.fromValues(0.,0.,0.));
+      cubenorms.push([vec3.fromValues(1.,0.,0.), vec3.fromValues(-1.,0.,0.), 
+                      vec3.fromValues(0.,1.,0.), vec3.fromValues(0.,-1.,0.),
+                      vec3.fromValues(0.,0.,1.), vec3.fromValues(0.,0.,-1.),]);
+    }
+    
+    // back right
+    clocs.push(vec3.fromValues(rightWall-cuz/2, rad, backWall+cuz/2));
+    // back left
+    clocs.push(vec3.fromValues(leftWall+cuz/2, rad, backWall+cuz/2));
+    // side left
+    clocs.push(vec3.fromValues(leftWall+cuz/2, rad, 0.));
+    // side right
+    clocs.push(vec3.fromValues(rightWall-cuz/2, rad, 0.));
+    // front right
+    clocs.push(vec3.fromValues(rightWall-cuz/2, rad, frontWall-cuz/2));
+    // front left
+    clocs.push(vec3.fromValues(leftWall+cuz/2, rad, frontWall-cuz/2));
+  }
+  
+  function appMain(canvasid) {
+    // Initialize quoll.js & WebGL
+    savedcanvasid = canvasid;
+    gl = quollInit(canvasid);
+    if (!gl) return;  // Could not intialize; exit
+
+    // Shaders
+    shaderprog1 = makeProgramObjectFromIds(gl, 'vshader1', 'fshader1');
+    if(!shaderprog1) return;
+
+    // Register callbacks with quoll.js
+    registerDisplay(myDisplay);
+    registerReshape(myReshape);
+    registerIdle(myIdle);
+    canvasFullWindow(true);
+    // Key listener
+    document.addEventListener('keypress', myKeyboard, false);
+    
+    gl.enable(gl.DEPTH_TEST);
+    
+    sideang = sideang_start;
+    upang   = upang_start;
+    
+    rackEm();
+    initCubes();
+  }
+  
+  // drawEm
+  // 
+  function drawEm() {
+    for(var i = 0; i < NUM_SPHERES; ++i) {
+      pushMvMatrix(gl);
+        
+        mat4.translate(gl.mvMatrix, gl.mvMatrix,
+          [locs[i][0], locs[i][1], locs[i][2]]);
+          
+        switch(colors[i]) {
+          case(0): // 1
+          case(8): // 9
+            drawSphere(gl, rad, 20, 40, 1.,1.,0.,1.);
+            break;
+          case(1): // 2
+          case(9): // 10
+            drawSphere(gl, rad, 20, 40, 0.,0.,1.,1.);
+            break;
+          case(2):  // 3
+          case(10): // 11
+            drawSphere(gl, rad, 20, 40, 1.,0.,0.,1.);
+            break;
+          case(3):  // 4
+          case(11): // 12
+            drawSphere(gl, rad, 20, 44, .5,0.,.5,1.);
+            break;
+          case(4):  // 5
+          case(12): // 13
+            drawSphere(gl, rad, 20, 40, 1.,.65,0.,1.);
+            break;
+          case(5):  // 6
+          case(13): // 14
+            drawSphere(gl, rad, 20, 40, 0.,1.,0.,1.);
+            break;
+          case(6):  // 7
+          case(14): // 15
+            drawSphere(gl, rad, 20, 40, 1.,.25,.55,1.);
+            break;
+          case(7):
+            drawSphere(gl, rad, 20, 40, 0.,0.,0.,1.);
+            break;
+          default:
+            drawSphere(gl, rad, 20, 40, 1.,1.,1.,1.);
+        }
+        
+      popMvMatrix(gl);
+    }
+    // cubes
+    for(var i = 0; i < NUM_CUBES; ++i) {
+      pushMvMatrix(gl);
+        
+        mat4.translate(gl.mvMatrix, gl.mvMatrix,
+          [clocs[i][0], clocs[i][1], clocs[i][2]]);
+          
+        mat4.rotate(gl.mvMatrix, gl.mvMatrix, crots[i][0], [0.,1.,0.]);
+        
+        drawCube(gl, cuz, .9,.35,.2,.1);
+          
+      popMvMatrix(gl);
+    }
+    
+    // left wall
+    pushMvMatrix(gl);
+      mat4.translate(gl.mvMatrix, gl.mvMatrix,
+        [leftWall, 1., 0.]);
+      mat4.rotate(gl.mvMatrix, gl.mvMatrix, Math.PI/180 * 90., [0.,1.,0.]);
+      mat4.scale(gl.mvMatrix, gl.mvMatrix, [90., 4., 1.]);
+      
+      drawSquare(gl, 1., 0., 1., 0., 1.);
+    popMvMatrix(gl);
+    
+    // right wall
+    pushMvMatrix(gl);
+      mat4.translate(gl.mvMatrix, gl.mvMatrix,
+        [rightWall, 1., 0.]);
+      mat4.rotate(gl.mvMatrix, gl.mvMatrix, Math.PI/180 * -90., [0.,1.,0.]);
+      mat4.scale(gl.mvMatrix, gl.mvMatrix, [90., 4., 1.]);
+      
+      drawSquare(gl, 1., 0., 1., 0., 1.);
+    popMvMatrix(gl);
+    
+    // back wall
+    pushMvMatrix(gl);
+      mat4.translate(gl.mvMatrix, gl.mvMatrix,
+        [0., 1., backWall]);
+      mat4.scale(gl.mvMatrix, gl.mvMatrix, [45., 4., 1.]);
+      
+      drawSquare(gl, 1., 0., 1., 0., 1.);
+    popMvMatrix(gl);
+    
+    // front wall
+    pushMvMatrix(gl);
+      mat4.translate(gl.mvMatrix, gl.mvMatrix,
+        [0., 1., frontWall]);
+      mat4.rotate(gl.mvMatrix, gl.mvMatrix, Math.PI/180 * 180., [0.,1.,0.]);
+      mat4.scale(gl.mvMatrix, gl.mvMatrix, [45., 4., 1.]);
+      
+      drawSquare(gl, 1., 0., 1., 0., 1.);
+    popMvMatrix(gl);
+    
+    //floor
+    pushMvMatrix(gl);
+      mat4.translate(gl.mvMatrix, gl.mvMatrix,
+        [0., -rad, 0.]);
+      mat4.rotate(gl.mvMatrix, gl.mvMatrix, Math.PI/180 * -90., [1.,0.,0.]);
+      mat4.scale(gl.mvMatrix, gl.mvMatrix, [46., 92., 1.]);
+      
+      drawSquare(gl, 1., 0., 1., 0., 1.);
+    popMvMatrix(gl);
+  }
+  
+  
+  // checkCollisions
+  // bumps in the night
+  function checkCollisions() {
+    for(var i = 0; i < NUM_SPHERES; ++i) {
+      for(var j = 0; j < NUM_SPHERES; ++j) {
+        if(i == j)
+          continue;
+        // sphere hit sphere
+        if(vec3.distance(locs[i], locs[j]) < rad*2) {
+            // https://en.wikipedia.org/wiki/Elastic_collision
+            // I really should have read the glmatrix documentation like 10 hours ago
+            // this took me way too long
+            
+            var vi = vels[i];
+            var vj = vels[j];
+            var xi = locs[i];
+            var xj = locs[j];
+            
+            var vdifi = vi;
+            vec3.subtract(vdifi, vi, vj);
+            
+            var vdifj = vj;
+            vec3.subtract(vdifj, vj, vi);
+            
+            var xdifi = vi;
+            vec3.subtract(xdifi, xi, xj);
+            
+            var xdifj = vj;
+            vec3.subtract(xdifj, xj, xi);
+            
+            
+            var demi = vec3.length(xdifi);
+            demi*=demi;
+            
+            var demj = vec3.length(xdifj);
+            demj*=demj;
+            
+            
+            var scali = (vec3.dot(vdifi,xdifi) / demi) *.8;
+            var scalj = (vec3.dot(vdifj,xdifj) / demj) *.8;
+            
+            vec3.scaleAndAdd(vels[i],vi, xdifi, scali);
+            vec3.scaleAndAdd(vels[j],vj, xdifj, scalj);
+            vels[i][1] *= .6;
+            vels[j][1] *= .6;
+        } 
+      }
+      
+      // sphere hit cube
+      for(var j = 0; j < NUM_CUBES; ++j) {
+        if(vec3.distance(locs[i], clocs[j]) < rad+cuz/2){
+          vec3.scale(vels[i],vels[i], 0);
+          crots[j][1] = 12;
+        }
+      }
+      // sphere hit wall
+      if(locs[i][0] + rad > rightWall) {
+        var norm = vec3.fromValues(-1.,0.,0.);
+        vec3.scale(norm,norm, 1.6*vec3.dot(norm,vels[i]));
+        vels[i] = vec3.subtract(vels[i], vels[i], norm);
+        
+        locs[i][0] = rightWall - rad;
+      }
+      if(locs[i][0] - rad < leftWall) {
+        var norm = vec3.fromValues(1.,0.,0.);
+        vec3.scale(norm,norm, 1.62*vec3.dot(norm,vels[i]));
+        vels[i] = vec3.subtract(vels[i], vels[i], norm);
+        
+        locs[i][0] = leftWall + rad;
+      }
+      if(locs[i][2] - rad < backWall) {
+        var norm = vec3.fromValues(0.,0.,1.);
+        vec3.scale(norm,norm, 1.62*vec3.dot(norm,vels[i]));
+        vels[i] = vec3.subtract(vels[i], vels[i], norm);
+        
+        locs[i][2] = backWall + rad;
+      }
+      if(locs[i][2] + rad > frontWall) {
+        var norm = vec3.fromValues(0.,0.,-1.);
+        vec3.scale(norm,norm, 1.62*vec3.dot(norm,vels[i]));
+        vels[i] = vec3.subtract(vels[i], vels[i], norm);
+        
+        locs[i][2] = frontWall - rad;
+      }
+      // sphere hit floor
+      if(locs[i][1] < 0.) {
+      var damp;
+        var vy = vels[i][1];
+        var potential = vy*vy-2. * gravity*(-2.*locs[i][1]);
+        if(potential < 0.) {
+          vels[i][1] = 0;
+          locs[i][1] = 0;
+        } else {
+          vels[i][1] = Math.sqrt(potential);
+          locs[i][1] = -locs[i][1];
+        }
+        damp = .6;
+        vels[i][1] *= damp;
+      } 
+    }
+  }
+  
+  // myIdle
+  // Does Gravity and whatever
+  function myIdle() {
+    var elapsedtime = getElapsedTime(0.1);
+   
+    // gravity calculations lifted from blast.html 
+    for(var i = 0; i < NUM_SPHERES; ++i) {
+      vels[i][1] -= gravity * elapsedtime;
+      vec3.scaleAndAdd(locs[i],locs[i],vels[i], elapsedtime);
+      
+      vec3.scale(vels[i], vels[i], .9999);
+    }
+    
+    for(var i = 0; i < NUM_CUBES; ++i) {
+      crots[i][0] += crots[i][1];
+    }
+    
+    checkCollisions();  
+    postRedisplay();
+  }
+  
+  
+  // myDisplay
+  // The display function.
+  function myDisplay() {
+    gl.useProgram(shaderprog1);
+
+    gl.clearColor(0.2, 0.2, 0.2, 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    
+    // camera stuff
+    mat4.identity(gl.mvMatrix);
+    mat4.translate(gl.mvMatrix, gl.mvMatrix,
+        [xpos, ypos, zpos]);
+    mat4.rotate(gl.mvMatrix, gl.mvMatrix,
+        upang, [1., 0., 0.]);
+    mat4.rotate(gl.mvMatrix, gl.mvMatrix,
+        sideang, [0., 1., 0.]);
+        
+    mat4.scale(gl.mvMatrix, gl.mvMatrix, [.5, .5, .5]);
+    
+    drawEm();
+
+    gl.flush();
+  }
+  
+  
+  // myReshape
+  // The reshape callback function. Called by quoll.js.
+  function myReshape(w, h) {
+    canvasheight = h;
+    canvaswidth = w;
+    // Set up viewport
+    gl.viewport(0, 0, w, h);
+
+    // Set up projection
+    mat4.identity(gl.pMatrix);
+    mat4.perspective(gl.pMatrix,
+                     Math.PI/180. * 60.,
+                     w/h,
+                     0.1, 100.);
+  }
+    
+  function myKeyboard(evt) {
+    var ch = keyFromEvent(evt);
+
+    switch (ch) {
+      case 'w':  // W: Move camera up
+        zpos += 1;
+        break;
+      case 'W':
+        upang += Math.PI/180. * 2.;
+        if (upang > Math.PI/2.)
+          upang = Math.PI/2.;
+        postRedisplay();
+        break;
+      case 'a':  // A: Move camera left
+        xpos += 1;
+        break;
+      case 'A':
+        sideang += Math.PI/180. * 2.;
+        postRedisplay();
+        break;
+      case 's':  // S: Move camera down
+        zpos -= 1;
+        break;
+      case 'S':
+        upang -= Math.PI/180. * 2.;
+        if (upang < 0.)
+          upang = 0.;
+        postRedisplay();
+        break;
+      case 'd':  // D: Move camera right
+        xpos -= 1;
+        break;
+      case 'D':
+        sideang -= Math.PI/180. * 2.;
+        postRedisplay();
+        break;
+      case ' ': // space: shoot ball
+        postRedisplay();
+        break;
+    }
+  }
+</script>
+</body>
+
+</html>
