@@ -174,7 +174,7 @@ void main()
   var NUM_SPHERES = 16;
   var NUM_CUBES = 6;
   var rad = 1.125;
-  var cuz = 4;
+  var cuz = 2.;
   
   var velfact = 7.;
   var gravity = 3.;
@@ -293,33 +293,39 @@ void main()
     locs.push(loc);
     
     // cueball
-    vels.push(vec3.fromValues(0.,3.,-20.));
-    locs.push(vec3.fromValues(0.,0.,frontWall/2));
+    vels.push(vec3.fromValues(0.,0.,-40.));
+    locs.push(vec3.fromValues(0.,0.,frontWall/2.));
   }
 
   function initCubes() {
     clocs = new Array();
     crots = new Array();
     cvels = new Array();
-    cubenorms = new Array();
     
     for(var i = 0; i < NUM_CUBES; ++i) {
-      crots.push([0.,0.]);
+      crots.push([0.,Math.PI/180.]);
       cvels.push(vec3.fromValues(0.,0.,0.));
     }
     
     // back right
-    clocs.push(vec3.fromValues(rightWall-cuz/2, rad, backWall+cuz/2));
+    clocs.push(vec3.fromValues(rightWall-cuz, rad, backWall+cuz));
     // back left
-    clocs.push(vec3.fromValues(leftWall+cuz/2, rad, backWall+cuz/2));
+    clocs.push(vec3.fromValues(leftWall+cuz, rad, backWall+cuz));
     // side left
-    clocs.push(vec3.fromValues(leftWall+cuz/2, rad, 0.));
+    clocs.push(vec3.fromValues(leftWall+cuz, rad, 0.));
     // side right
-    clocs.push(vec3.fromValues(rightWall-cuz/2, rad, 0.));
+    clocs.push(vec3.fromValues(rightWall-cuz, rad, 0.));
     // front right
-    clocs.push(vec3.fromValues(rightWall-cuz/2, rad, frontWall-cuz/2));
+    clocs.push(vec3.fromValues(rightWall-cuz, rad, frontWall-cuz));
     // front left
     clocs.push(vec3.fromValues(leftWall+cuz/2, rad, frontWall-cuz/2));
+    
+    
+    // test
+    
+    // clocs.push(vec3.fromValues(-10.,rad,0.));
+    // crots.push([0.,Math.PI/180.]);
+    // cvels.push(vec3.fromValues(0.,0.,0.));
   }
   
   function appMain(canvasid) {
@@ -405,7 +411,7 @@ void main()
           
         mat4.rotate(gl.mvMatrix, gl.mvMatrix, crots[i][0], [0.,1.,0.]);
         
-        drawCube(gl, cuz, .9,.35,.2,.1);
+        drawCube(gl, cuz*2, .9,.35,.2,.1);
           
       popMvMatrix(gl);
     }
@@ -511,13 +517,110 @@ void main()
       
       // sphere hit cube
       for(var j = 0; j < NUM_CUBES; ++j) {
-        if(vec3.distance(locs[i], clocs[j]) < rad+Math.sqrt(2*((cuz/2)*(cuz/2)))){
+        // sphere hit sphere that surrounds cube
+        if(vec3.distance(locs[i], clocs[j]) < rad+Math.sqrt(2*(cuz*cuz))){
+          // calculate closest point on sphere to center of cube
           var temp = vec3.fromValues(0.,0.,0.);
-          vec3.subtract(temp, locs[i], clocs[j]);
+          vec3.subtract(temp, clocs[j], locs[i]);
           vec3.normalize(temp, temp);
-          vec3.scale(temp, temp, 2.*vec3.dot(temp, vels[i]));
-          vec3.subtract(vels[i], vels[i], temp);
-          crots[j][1] = 8 * temp[0];
+          vec3.scale(temp, temp, rad);
+          vec3.add(temp, locs[i], temp);
+          
+          // setup rotatable vectors pointing away from cube center
+          var fur= vec3.fromValues(cuz, cuz, cuz);
+          var ful= vec3.fromValues(-cuz, cuz, cuz);
+          var fll= vec3.fromValues(-cuz, -cuz, cuz);
+          var flr= vec3.fromValues(cuz, -cuz, cuz);
+          var bur= vec3.fromValues(cuz, cuz, -cuz);
+          var bul= vec3.fromValues(-cuz, cuz, -cuz);
+          var bll= vec3.fromValues(-cuz, -cuz, -cuz);
+          var blr= vec3.fromValues(cuz, -cuz, -cuz);
+          
+          // and rotate them
+          vec3.rotateY(fur, fur, clocs[j], crots[j][1]);
+          vec3.rotateY(ful, ful, clocs[j], crots[j][1]);
+          vec3.rotateY(fll, fll, clocs[j], crots[j][1]);
+          vec3.rotateY(flr, flr, clocs[j], crots[j][1]);
+          vec3.rotateY(bur, bur, clocs[j], crots[j][1]);
+          vec3.rotateY(bul, bul, clocs[j], crots[j][1]);
+          vec3.rotateY(bll, bll, clocs[j], crots[j][1]);
+          vec3.rotateY(blr, blr, clocs[j], crots[j][1]);
+          // set bounds for hitboxing 
+          var posxu = vec3.fromValues(clocs[j][0]+cuz, clocs[j][1]+fur[1], clocs[j][2]+ful[2]);
+          var posxl = vec3.fromValues(clocs[j][0], clocs[j][1]+blr[1], clocs[j][2]+bll[2]);
+          
+          var posyu = vec3.fromValues(clocs[j][0]+bur[0], clocs[j][1]+cuz, clocs[j][2]+bul[2]);
+          var posyl = vec3.fromValues(clocs[j][0]+fur[0], clocs[j][1], clocs[j][2]+ful[2]);
+          
+          var poszu = vec3.fromValues(clocs[j][0]+fur[0], clocs[j][1]+fur[1], clocs[j][2]+cuz);
+          var poszl = vec3.fromValues(clocs[j][0]+ful[0], clocs[j][1]+flr[1], clocs[j][2]);
+          
+          var negxu = vec3.fromValues(clocs[j][0], clocs[j][1]+ful[1], clocs[j][2]+ful[2]);
+          var negxl = vec3.fromValues(clocs[j][0]-cuz, clocs[j][1]+bll[1], clocs[j][2]+bll[2]);
+          
+          var negyu = vec3.fromValues(clocs[j][0]+flr[0], clocs[j][1], clocs[j][2]+flr[2]);
+          var negyl = vec3.fromValues(clocs[j][0]+bll[0], clocs[j][1]-cuz, clocs[j][2]+bll[2]);
+          
+          var negzu = vec3.fromValues(clocs[j][0]+bur[0], clocs[j][1]+bul[1], clocs[j][2]);
+          var negzl = vec3.fromValues(clocs[j][0]+bul[0], clocs[j][1]+bll[1], clocs[j][2]-cuz);
+          
+          
+          // check if point hits cube plane, bounce off
+          // +x
+          if( ((posxl[0] < temp[0]) && (temp[0] <= posxu[0])) &&
+              ((posxl[1] < temp[1]) && (temp[1] <= posxu[1])) &&
+              ((posxl[2] < temp[2]) && (temp[2] <= posxu[2])) ) {  
+                var norm = vec3.fromValues(1.,0.,0.);
+                vec3.rotateY(norm, norm, clocs[j], crots[j][0]);
+                vec3.normalize(norm, norm);
+                vec3.scale(norm,norm, 1.9*vec3.dot(norm,vels[i]));
+                vels[i] = vec3.subtract(vels[i], vels[i], norm);
+          // -x
+          } else if ( ((negxl[0] < temp[0]) && (temp[0] <= negxu[0])) &&
+                      ((negxl[1] < temp[1]) && (temp[1] <= negxu[1])) &&
+                      ((negxl[2] < temp[2]) && (temp[2] <= negxu[2])) ) { 
+                var norm = vec3.fromValues(-1.,0.,0.);
+                vec3.rotateY(norm, norm, clocs[j], crots[j][0]);
+                vec3.normalize(norm, norm);
+                vec3.scale(norm,norm, 1.9*vec3.dot(norm,vels[i]));
+                vels[i] = vec3.subtract(vels[i], vels[i], norm);
+          // +y
+          } else if ( ((posyl[0] < temp[0]) && (temp[0] <= posyu[0])) &&
+                      ((posyl[1] < temp[1]) && (temp[1] <= posyu[1])) &&
+                      ((posyl[2] < temp[2]) && (temp[2] <= posyu[2])) ) { 
+                var norm = vec3.fromValues(0.,1.,0.);
+                vec3.rotateY(norm, norm, clocs[j], crots[j][0]);
+                vec3.normalize(norm, norm);
+                vec3.scale(norm,norm, 1.9*vec3.dot(norm,vels[i]));
+                vels[i] = vec3.subtract(vels[i], vels[i], norm);
+          // -y
+          } else if ( ((negyl[0] < temp[0]) && (temp[0] <= negyu[0])) &&
+                      ((negyl[1] < temp[1]) && (temp[1] <= negyu[1])) &&
+                      ((negyl[2] < temp[2]) && (temp[2] <= negyu[2])) ) { 
+                var norm = vec3.fromValues(0.,-1.,0.);
+                vec3.rotateY(norm, norm, clocs[j], crots[j][0]);
+                vec3.normalize(norm, norm);
+                vec3.scale(norm,norm, 1.9*vec3.dot(norm,vels[i]));
+                vels[i] = vec3.subtract(vels[i], vels[i], norm);
+          // +z
+          } else if ( ((poszl[0] < temp[0]) && (temp[0] <= poszu[0])) &&
+                      ((poszl[1] < temp[1]) && (temp[1] <= poszu[1])) &&
+                      ((poszl[2] < temp[2]) && (temp[2] <= poszu[2])) ) { 
+                var norm = vec3.fromValues(0.,0.,1.);
+                vec3.rotateY(norm, norm, clocs[j], crots[j][0]);
+                vec3.normalize(norm, norm);
+                vec3.scale(norm,norm, 1.9*vec3.dot(norm,vels[i]));
+                vels[i] = vec3.subtract(vels[i], vels[i], norm);
+          // -z
+          } else if ( ((negzl[0] < temp[0]) && (temp[0] <= negzu[0])) &&
+                      ((negzl[1] < temp[1]) && (temp[1] <= negzu[1])) &&
+                      ((negzl[2] < temp[2]) && (temp[2] <= negzu[2])) ) { 
+                var norm = vec3.fromValues(0.,0.,-1.);
+                vec3.rotateY(norm, norm, clocs[j], crots[j][0]);
+                vec3.normalize(norm, norm);
+                vec3.scale(norm,norm, 1.9*vec3.dot(norm,vels[i]));
+                vels[i] = vec3.subtract(vels[i], vels[i], norm);
+          } 
         }
       }
       // sphere hit wall
@@ -577,7 +680,7 @@ void main()
       vels[i][1] -= gravity * elapsedtime;
       vec3.scaleAndAdd(locs[i],locs[i],vels[i], elapsedtime);
       
-      vec3.scale(vels[i], vels[i], .999);
+      // vec3.scale(vels[i], vels[i], .999);
     }
     
     for(var i = 0; i < NUM_CUBES; ++i) {
@@ -662,7 +765,7 @@ void main()
         sideang -= Math.PI/180. * 2.;
         postRedisplay();
         break;
-      case ' ': // space: shoot ball
+      case ' ': //
         floor = -rad;
         postRedisplay();
         upang = upang_start;
