@@ -1,0 +1,215 @@
+<!-- James R Von Holle -->
+<!-- elf.html -->
+<!-- blog post about elf light project for CS480 -->
+
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Sweet Elf Lights</title>
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <script src="web_stuff.js"></script>
+    </head>
+    <body>
+        <ul class="top_menu" id="nav">
+            <li><a href="index.html">home</a></li>
+            <li class="drop">
+                <a href="javascript:void(0)" class="drop_butt" onclick="showExList()">posts</a>
+                <div class="ex_list" id="exList">
+                    <a href="elf.html">elf</a>
+                    <a href="proj2.html">project_two</a>
+                </div>
+            </li>
+            <li><a href="about.html">about</a></li>
+        </ul>
+        <div class="parallax"></div>
+        <div class="boxes" style="position: absolute; top:15%; height:55%">
+            <div class box_ul>
+                <div class="box_card">
+                    <img src="http://thumbs.worthpoint.com/zoom/images1/1/1207/05/pixie-elf-the-spinning-holiday-light-christmas_1_54de98ca015ef208602dc5e24f8cdf90.jpg"
+                        style="max-width:50%; min-height:50%; left:30;" onclick="window.open(this.src)">
+                <div class="box_text">
+                    <h1><b>The Elf.</b></h1>
+                    <p>The original idea for this project involved upgrading an old light that my dad really liked. It had been
+                        in the family for a while, probably since they were originally made, which like in the 70s or something.
+                        So yeah, it was pretty old school. In this post I'll go over my plan based on the first time my dad got
+                        it upgraded, the steps I took to get started, what I've got working at the time of this post, what I'd do different,
+                        and my plans for continuing in the immediate future.</p>
+                </div>
+                </div>
+            </div>
+            </div>
+        <div class="parallax"></div>
+        <div class="boxes" style="position: absolute; top:80%; height:75%" >
+            <div class="box_text">
+                <h1>Planing Stage</h1>
+            </div>
+            <div class="box_ul" >
+                <div class="box_card">
+                    <img src="vonholle_hw2.png"  style="width:60%; padding: 0;" onclick="window.open(this.src)"/>
+                    <div class="box_text">
+                        <h4><b>The New Ring</b></h4>
+                        <p>The original elf came with injection molded ring to hold all the lights.
+                            and with this being a 3D printing class (along with all the hotglue from the first upgrade)
+                            a new version of the ring was in order. So I made the model above in OpenScad. </p>
+                            <a href="">Code</a>
+                    </div>
+                </div>
+            </div>
+            <div class="box_ur">
+                <div class="box_card">
+                    <div class="box_text">
+                        <h4><b>The New MicroController</b></h4>
+                        <p>For the first upgrade, the old school electrical engineering magic was replaced with an Arduino.
+                            This worked well for the most part. But it's 2018 so I wanted to be able to do some sweet wireless nonsense.
+                            So I decided on an Adafruit nRF52 Bluetooth feather microcontroller. This will alow for bluetooth control of colors,
+                            brightness, and possibly change or add patterns.</p>
+                    </div>
+                    <video src="https://cdn-shop.adafruit.com/product-videos/1200x900/3406-07.mp4" autoplay loop type="video/mp4" style="width:70%;" onclick="window.open(this.src)"/> 
+                </div>
+            </div>
+            <div class="box_lc">
+                <div class="box_card">
+                    <img src="https://cdn-shop.adafruit.com/1200x900/1938-05.jpg" style="width:60%;" onclick="window.open(this.src)"/>
+                    <div class="box_text">
+                        <h4><b>The New LEDs</b></h4>
+                        <p>The first time the ring was updated, single color LEDs that were controlled by digital output pins,
+                            meaning that in addition to not being able to control brightness or color, they were grouped together in sets of 5.
+                            This limited the amout of possible options for patterns. To solve these problems, I found Adafruit NeoPixels, pictured above,
+                            are RGB LEDs that have control chips, which allows them to be chained together using only one data pin. This means that I can
+                            actually fit the amount of wires I need to connect 30 of the lights around the ring.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="parallax"></div>
+        <div class="boxes" style="position: absolute; top:200%; height:105%">
+            <div class="box_text">
+                <h1>The Printing</h1>
+            </div>
+            <div class="box_ul" >
+                <div class="box_card">
+                    <img src="og.jpg"  style="width:60%; padding: 0;" onclick="window.open(this.src)"/>
+                    <div class="box_text">
+                        <h4><b>The First Print</b></h4>
+                        <p>All things considered, the first print turned out really well. My first ever 3D print and nothing broke, the support material worked well,
+                            the only problems came from my guestimated measurements. The star was thicker than needed, and the holes for the lights were too big.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="box_ur">
+                <div class="box_card">
+                    <img src="3.jpg" style="width:60%;" onclick="window.open(this.src)"/>
+                    <div class="box_text">
+                        <h4><b>Second Try</b></h4>
+                        <p>On the second try, I got the mounts the right size, and had the bright idea of including a hook to hang it, and some standoffs on the back of the star.
+                            You can't see them in this picture, but don't worry, they didn't print right. This was probably the worst print of the bunch, but I learned a lot from it.
+                            Like for one, I should have used slic3r instead of cura, and that I should probably print in two parts to save time and so the standoffs don't wind up 
+                            enveloped in the support material for the star.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="box_lr">
+                <div class="box_card">
+                    <img src="extra_hole.jpg" style="width:60%;" onclick="window.open(this.src)"/>
+                    <div class="box_text">
+                        <h4><b>Third Time was almost the charm</b></h4>
+                        <p>For the third print I finally realized that I should print in two pieces, which I did, and as a result got done with both of those prints in about 
+                            half the time it would have taken if I did it as one piece. Unfortunately, I found out after I sat down to finish up and solder all the lights into place
+                            that I had never actually counted how many holders I needed. I guess I had seen "31 Lights!" on a box in my initial research and forgot that the elf had a 
+                            bulb behind him. Needless to say, I was frustrated, but at least I knew that my new printing method wouldn't take 8 hours this time.</p>
+                    </div>
+                    <img src="star_wfeather.jpg" style="width:60%;" onclick="window.open(this.src)"/>
+                </div>
+            </div>
+            <div class="box_ll">
+                <div class="box_card">
+                    <img src="4wostar.jpg" style="width:60%;" onclick="window.open(this.src)"/>
+                    <div class="box_text">
+                        <h4><b>The Fourth, and hopefully Final Print</b></h4>
+                        <p>After correcting the number of LED mounts, I reprinted the ring, unfortunatly, without easy access to a soldering iron I was not able to make any more progress
+                            on that front.</p>
+                    </div>
+                    <img src="4_wstar.jpg" style="width:60%;" onclick="window.open(this.src)"/>
+                </div>
+            </div>
+        </div>
+        <div class="parallax"></div>
+        <div class="boxes" style="position: absolute; top:330%; height:105%">
+            <div class="box_text">
+                <h1>The Lights</h1>
+            </div>
+            <div class="box_ul" >
+                <div class="box_card">
+                    <img src="http://i.ebayimg.com/images/i/301468434982-0-1/s-l1000.jpg"  style="width:60%; padding: 0;" onclick="window.open(this.src)"/>
+                    <div class="box_text">
+                        <h4><b>The Original Lights</b></h4>
+                        <p>Back in the day, they didn't have LEDs, so the original elf had some old school hardware based magic to make the lights spin around. 
+                            The only problem with that these days is replacement bulbs where increadibly hard to find.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="box_ur">
+                <div class="box_card">
+                    <img src="https://cdn-shop.adafruit.com/1200x900/297-00.jpg" style="width:60%;" onclick="window.open(this.src)"/>
+                    <div class="box_text">
+                        <h4><b>The First Upgrade</b></h4>
+                        <p>In the first upgrade, as mentioned before, single color LEDs were used. This was pretty much fine, as it allowed the emulation of the original pattern of blinking
+                            and could drop right into the original light holders without any modification because it was just two pins. But, it wasn't as cool as RGB could make it.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="box_lc">
+                <div class="box_card">
+                    <img src="neo_fit.jpg" style="width:60%;" onclick="window.open(this.src)"/>
+                    <div class="box_text">
+                        <h4><b>The NeoPixel</b></h4>
+                        <p>This is where the neopixels come in, as they can be linked together using only one data pin, they make it really easy to use way less wire than regular RGB would be.
+                            The only problem was that they had 4 pins instead of two (althought this would have been a problem with regular RGB LEDs anyway). To get around this I had to snip
+                            the part of the light holder that would sink into the ring and separate the two pins off, and then use a soldering iron to melt out a larger slot for all 4 pins to fit through.
+                            For some of the early attempts, I stripped some wire and put that over the pins, as seen above. This worked, but seemed a bit wasteful and like something I could just work around
+                            with some hotglue and a bigger hole. Seen below is an attempt to mount a couple of these new fitted pixels to a breadboard and see how they look. I didn't use enough hotglue so they
+                            didn't stick great, but it'll be enough glue to hold them together when I finally get around to soldering.
+                            </p>
+                    </div>
+                    <img src="light.jpg" style="width:60%;" onclick="window.open(this.src)"/>
+                </div>
+            </div>
+        </div>
+        <div class="parallax"></div>
+        <div class="boxes" style="position: absolute; top:545%; height:105%">
+            <div class="box_text">
+                <h1>The Lights</h1>
+            </div>
+            <div class="box_ul" >
+                <div class="box_card">
+                    <img src="http://i.ebayimg.com/images/i/301468434982-0-1/s-l1000.jpg"  style="width:60%; padding: 0;" onclick="window.open(this.src)"/>
+                    <div class="box_text">
+                        <h4><b>The Original Lights</b></h4>
+                        <p>Back in the day, they didn't have LEDs, so the original elf had some old school hardware based magic to make the lights spin around. 
+                            The only problem with that these days is replacement bulbs where increadibly hard to find.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="box_ur">
+                <div class="box_card">
+                    <img src="https://cdn-shop.adafruit.com/1200x900/297-00.jpg" style="width:60%;" onclick="window.open(this.src)"/>
+                    <div class="box_text">
+                        <h4><b>The First Upgrade</b></h4>
+                        <p>In the first upgrade, as mentioned before, single color LEDs were used. This was pretty much fine, as it allowed the emulation of the original pattern of blinking
+                            and could drop right into the original light holders without any modification because it was just two pins. But, it wasn't as cool as RGB could make it.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="box_lc">
+                <div class="box_card">
+                    <img src="neo_fit.jpg" style="width:60%;" onclick="window.open(this.src)"/>
+                    <div class="box_text">
+                        <h4><b>The NeoPixel</b></h4>
+                    </div>
+                    <img src="light.jpg" style="width:60%;" onclick="window.open(this.src)"/>
+                </div>
+            </div>
+        </div>
+        <div class="parallax"></div>
+    </body>
+</html> 
