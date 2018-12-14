@@ -25,18 +25,212 @@
         <div class="boxes" style="position: absolute; top:15%; height:55%">
             <div class box_ul>
                 <div class="box_card">
-                    <img src="http://thumbs.worthpoint.com/zoom/images1/1/1207/05/pixie-elf-the-spinning-holiday-light-christmas_1_54de98ca015ef208602dc5e24f8cdf90.jpg"
-                        style="max-width:50%; min-height:50%; left:30;" onclick="window.open(this.src)">
+                    <img src="spinny.gif" style="max-width:80%; min-height:50%; left:30;" />
                     <div class="box_text">
                         <h1><b>The Elf, Part 2</b></h1>
                         <p>
-                           
+                           For this project, I wanted to finish up the elf lights I had started before, because I never got around to it.
+                           I had most things ready to roll, I just needed to find time to sit down and solder it all up. I also wanted to do something
+                           with openCV, as I hadn't had a chance to do much programming 
                         </p>
-                           
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="parallax"></div>
+        <div class="boxes" style="position: absolute; top:80%; height:80%" >
+            <div class="box_text">
+                <h1>Soldering</h1>
+            </div>
+            <div class="box_ul" >
+                <div class="box_card">
+                    <img src="https://cdn-shop.adafruit.com/1200x900/1938-05.jpg" style="width:90%;" onclick="window.open(this.src)"/>
+                    <div class="box_text">
+                        <h4><b>The NeoPixel</b></h4>
+                        <p>The neopixel consists of 4 pins that needed to be soldered in order to work, +5v, Ground, Data In and Data Out. This can be seen in the above image.
+                            This meant I had to figure out how to solder all these together in the most space efficient way I could.
+                            </p>
+                    </div>
+                </div>
+            </div>
+            <div class="box_ur">
+                <div class="box_card">
+                    <img src="plan.png" style="width:90%;" onclick="window.open(this.src)"/>
+                    <div class="box_text">
+                        <h4><b>The Plan</b></h4>
+                        <p>To solder everything together, I came up with a pretty simple plan, I would have connect the data pins as neccessary by small leads of wire, and then
+                            have two rings of wire running around the inside and outside of the cutout below the LEDs. These two wires would be hooked to power and ground and the appropriate
+                            pins would be bent over and attached.
+                    </div>
+                </div>
+            </div>
+            <div class="box_lc">
+                <div class="box_card" style="left:33%">
+                    <img src="solder.jpg" style="width:60%;" onclick="window.open(this.src)"/>
+                    <div class="box_text">
+                        <h4><b>The Hard Part</b></h4>
+                        <p>After I had figured out what I needed to do, I just had to do the hard part and find some time to sit down and get everything soldered up. I managed to find the 
+                            time one Friday afternoon and after about 5 hours of work I had everything hooked up.</p>
                            
                     </div>
                 </div>
             </div>
         </div>
+        <div class="parallax"></div>
+        <div class="boxes" style="position: absolute; top:200%; height:130%">
+            <div class="box_text">
+                <h1>Trouble Shooting</h1>
+            </div>
+            <div class="box_ul" >
+                <div class="box_card">
+                    <img src="bad_light.jpg"  style="width:80%; padding: 0;" onclick="window.open(this.src)"/>
+                    <div class="box_text">
+                        <h4><b>Wonky Colors</b></h4>
+                        <p>After having wired everything up, the first thing I noticed was that most of the NeoPixels would light up to the wrong color.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="box_ur">
+                <div class="box_card">
+                    <img src="caps.jpg" style="width:90%;" onclick="window.open(this.src)"/>
+                    <div class="box_text">
+                        <h4><b>Capacitors</b></h4>
+                        <p>One of the two things that I had to do to solve this was add several capacitors into the wiring of the project. I put one large capacitor near where the power
+                            coming off the board was connected to the ring, and smaller ones at several points along the way, soldering them across the power and ground.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="box_ll" style="top:35%">
+                <div class="box_card" style="height:135% padding:0px;">
+                    <img src="https://cdn-learn.adafruit.com/assets/assets/000/043/921/original/microcontrollers_nRF52Pinout.png" style="width:70%;"  onclick="window.open(this.src)"/>
+                    <div class="box_text" >
+                        <h4><b>MAXIMUM POWAAAAA</b></h4>
+                        <p>When I first wired up the ring I attached the 3.3v power output on the board to the power ring of the neopixels. I was hoping to use this as a sort of hardware
+                            brightness dampener, as one of the main complaints of the last set of LEDs was their blinding brightness and inability to dim them. However, as it turned out 3.3v
+                            was not enough to power the ring of Neopixels. Luckily for me however, the Bluefruit board has a power passthrough of 5v straight from the USB input (VBUS), which allowed me to get
+                            the full 5v the neopixels wanted.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="box_lr" style="top:35%">
+                <div class="box_card">
+                    <img src="spinny.gif" style="width:90%;" onclick="window.open(this.src)"/>
+                    <div class="box_text">
+                        <h4><b>97% Working</b></h4>
+                        <p>After dropping in some capacitors and hooking up that good juice, almost every color thrown at the board works. It still has some trouble with really dim colors, but they are 
+                            infrequent enough that I'm content to just leave it.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="parallax"></div>
+        
+        <div class="boxes" style="position: absolute; top:370%; height:65%">
+            <div class="box_text">
+                <h1>Finishing Up</h1>
+            </div>
+            <div class="box_l" >
+                <div class="box_card">
+                    <img src="new_color.gif"  style="width:60%; padding: 0;height:100%" onclick="window.open(this.src)"/>
+                    <div class="box_text">
+                        <h4><b>Programming</b></h4>
+                        <p>Currently there are three patterns programmed, one is the simple two way drip thing that has 5 colors (4 generated + base) that step around in a fixed pattern, 
+                            it can be seen in the gifs scattered around this page. Another is a couple different lights turning on and off at random with one color, the third is a sort 
+                            of loading pattern that activates after a new base color is selected, the new color spins around one light at a time leaving the last unlit light on. I plan
+                            to add two more patterns (there are 4 buttons in the bluefruit ap) and possible replace the random sparkle one.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="box_r">
+                <div class="box_card">
+                    <img src="back.jpg" style="width:60%; height:100%" onclick="window.open(this.src)"/>
+                    <div class="box_text">
+                        <h4><b>Back Plate</b></h4>
+                        <p>In order to protect the soldered bits and add a hook, I designed a simple plate to slip over the back of the ring and enclose the wiring. To make it I simply added a couple mil to the 
+                            outer diameter of the openSCAD code I had for the ring in the first place.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="parallax"></div>
+        
+        <div class="boxes" style="position: absolute; top:465%; height:55%">
+            <div class="box_text">
+                <h1>What's next</h1>
+            </div>
+            <div class="box_l" >
+                <div class="box_card">
+                    <img src="http://thumbs.worthpoint.com/zoom/images1/1/1207/05/pixie-elf-the-spinning-holiday-light-christmas_1_54de98ca015ef208602dc5e24f8cdf90.jpg"  style="width:60%; padding: 0;" onclick="window.open(this.src)"/>
+                    <div class="box_text">
+                        <h4><b>Attaching the Elf</b></h4>
+                        <p>One of the very final things is to attach one of the few original parts left, which is the elf. My current plan is chopping down a wooden dowel that fits into the hole in the back 
+                            of their head and glueing that on. Previously there was an LED in there but with the way I mounted the board this time it would have been tricky to mount an LED on the front of the star.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="box_r">
+                <div class="box_card">
+                    <img src="https://factorydirectcraft.com/pimages/20130829153532-059830/gold_tinsel_garland_with_red_stars.jpg" style="width:60%;" onclick="window.open(this.src)"/>
+                    <div class="box_text">
+                        <h4><b>Maybe gold tinsely bits</b></h4>
+                        <p>After attaching the elf I need to see if my dad or anyone else in the family wants there to be gold tinsel like there was originally. If they do, it should be a pretty simple matter of glueing
+                            some gold tinsely stuff from a craft shop around the outside and the star.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="parallax"></div>
+        
+        <div class="boxes" style="position: absolute; top:550%; height:150%">
+            <div class="box_text">
+                <h1>What happened to OpenCV?</h1>
+            </div>
+            <div class="box_ul">
+                <div class="box_card">
+                    <img src="https://cdn.wccftech.com/wp-content/uploads/2015/04/windows_logo.png" style="width:60%;" onclick="window.open(this.src)"/>
+                    <div class="box_text">
+                        <h4><b>Windows</b></h4>
+                        <p>The first major problem came when I tried to dual boot between Windows 10 and Manjaro linux on my laptop. I hate using visual studio, so I was planning on using OpenCV in a simple Vim setup
+                            in Manjaro. This was working alrigh until I needed to use Windows to flash something to my Bluefruit. Because I was running on a laptop, when I closed the lid it went into its hybernation
+                            mode or whatever instead of just going to sleep or turning off. This ment that Windows decided to encrypt all the partitions on my harddrive, breaking grub and meaning I had to use the command
+                            line in a Windows USB boot drive to format the MBR and install the Windows bootloader. This scared me off from trying to dual boot again.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="box_ur">
+                <div class="box_card">
+                    <img src="https://wp.flash-jet.com/wp-content/uploads/2015/08/2000px-OpenCV_Logo_with_text_svg_version.svg_-831x1024.png" style="width:60%;" onclick="window.open(this.src)"/>
+                    <div class="box_text">
+                        <h4><b>OpenCV.js</b></h4>
+                        <p>After the headache I ran into with dualbooting a Windows 10 machine, I decided to fiddle around with OpenCV.js, a select portion of OpenCV ported to run in a browser using javascript.
+                            This would have been neat, but I had a ton of trouble building opencv.js on the web-based IDE I use called cloud9. I spent about a day and a half fighting different python and cmake versions
+                            before giving up on this version. I have no idea why they don't have a prebuilt version, but I didn't look to far into it and I think there's quite a bit of webassembly black magic involved 
+                            in how they made it work.</p>
+                            <a href="https://docs.opencv.org/3.3.1/d5/d10/tutorial_js_root.html">OpenCV.js Page</a>
+                    </div>
+                </div>
+            </div>
+            <div class="box_ll">
+                <div class="box_card">
+                    <img src="https://fabioribeiro.com.br/site/wp-content/uploads/oDesk-Node.js-Test-Answers-2015.png" style="width:60%;" onclick="window.open(this.src)"/>
+                    <div class="box_text">
+                        <h4><b>OpenCV for Node.js</b></h4>
+                        <p>While trying to google-fu my way into getting opencv.js to work I stumbled onto OpenCV for Node.js. This is a collection of bindings to run OpenCV on a Node.js server, which is also neat,
+                            and has less black arts involved than webassembly. So I decided to start working with this instead. However, I ran once again into some problems with using cloud9 and trying to do opencv webcam
+                            stuff. I got closer than before, however, by running the server on a cloud machine I needed to use the webpage to capture webcam footage, which is where I hit the major wall for working with this
+                            system, streaming video. It seems totatly plausable that one could capture webcam footage from a webpage, stream it back to a node.js server, crunch some opencv stuff on it and then stream back 
+                            the processed video or images. However, having found this framework around a day before the due date of this project, I had to give up on figuring out how to implement video streaming with socket.io.
+                            Perhaps I'll return to this project to do something fun and learn more about web frameworks, but for now I think I'm going to enjoy some Eggnog and relax. </p>
+                        <a href="http://peterbraden.github.io/node-opencv/">OpenCV for Node.js</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="parallax"></div>
+        
     </body>
 </html> 

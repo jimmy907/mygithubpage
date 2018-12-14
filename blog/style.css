@@ -159,6 +159,18 @@ li.drop {
     position: absolute;
     width: 50%;
     height: 60%;
+}.boxes .box_l {
+    top: 0%;
+    left: 0%;
+    position: absolute;
+    width: 50%;
+    height: 100%;
+}.boxes .box_r {
+    top: 0%;
+    left: 50%;
+    position: absolute;
+    width: 50%;
+    height: 100%;
 }
 
 .boxes .box_lr {
